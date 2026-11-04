@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/onboarding-layout :: commonAssets('Apertura de Cuenta')}"></th:block>
+</head>
+<body class="bg-soft onboarding-layout account-open-scope">
+<div class="container-fluid px-2 px-md-4 py-3 py-md-4 onboarding-shell">
+    <div class="row g-3 g-lg-4 align-items-start onboarding-grid">
+        <aside th:replace="~{fragments/onboarding-layout :: sidebar}"></aside>
+
+        <main class="col-12 col-lg-10 onboarding-main">
+            <header th:replace="~{fragments/onboarding-layout :: topbar}"></header>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                <h5 class="mb-0 fw-bold text-brand">Apertura de cuenta - Selección de tipo</h5>
+                <a class="btn btn-outline-secondary" th:href="@{/onboarding/1}"><i class="bi bi-arrow-left"></i> Volver</a>
+            </div>
+
+            <section class="card border-0 shadow-sm rounded-4 relation-window">
+                <div class="card-body p-3 p-md-4">
+                    <div class="row g-2 align-items-end mb-3">
+                        <div class="col-12 col-md-4">
+                            <label class="form-label">Línea</label>
+                            <div class="input-group input-group-sm">
+                                <input class="form-control" value="03">
+                                <input class="form-control" value="DEPOSITOS">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label class="form-label">Grupo</label>
+                            <div class="input-group input-group-sm">
+                                <input class="form-control" value="11">
+                                <input class="form-control" value="CUENTA CORRIENTE">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-2 d-grid">
+                            <button class="btn btn-outline-secondary btn-sm" type="button">Buscar</button>
+                        </div>
+
+                    </div>
+
+                    <small class="account-table-hint d-block mb-1">Haz clic en un renglón para seleccionarlo.</small>
+                    <div class="table-responsive relation-table-wrap mb-3">
+                        <table class="table table-sm align-middle mb-0 relation-table click-select-table" id="accountTypeTable" data-click-select-auto="false">
+                            <thead>
+                            <tr>
+                                <th>Línea</th>
+                                <th>Grupo</th>
+                                <th>Pdv</th>
+                                <th>TrfaPdv</th>
+                                <th>Descripción</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr data-tipo="CUENTA AHORRO TRADICIONAL">
+                                <td>03</td><td>11</td><td>V001</td><td>001</td><td>CUENTA AHORRO TRADICIONAL</td>
+                            </tr>
+                            <tr data-tipo="CUENTA AHORRO INFONAVIT">
+                                <td>03</td><td>11</td><td>V002</td><td>001</td><td>CUENTA AHORRO INFONAVIT</td>
+                            </tr>
+                            <tr data-tipo="DEBICUENTA CON INTERESES">
+                                <td>03</td><td>11</td><td>V008</td><td>001</td><td>DEBICUENTA CON INTERESES</td>
+                            </tr>
+                            <tr data-tipo="CUENTA OPERATIVA AHORRO INFANTIL">
+                                <td>03</td><td>11</td><td>V200</td><td>009</td><td>CUENTA OPERATIVA AHORRO INFANTIL</td>
+                            </tr>
+                            <tr data-tipo="NOMINA BASICA BIENESTAR">
+                                <td>03</td><td>11</td><td>V201</td><td>002</td><td>NOMINA BASICA BIENESTAR</td>
+                            </tr>
+                            <tr data-tipo="DEBICUENTA BASICA">
+                                <td>03</td><td>11</td><td>V201</td><td>004</td><td>DEBICUENTA BASICA</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <form id="accountTypeForm" class="d-flex justify-content-between align-items-center gap-2 flex-wrap"
+                          method="get" th:action="@{/onboarding/apertura-cuenta/detalle}">
+                        <div class="small fw-semibold text-brand">Seleccionado: <span id="selectedAccountTypeLabel" class="account-selected-text">Ninguno</span></div>
+                        <input type="hidden" id="selectedAccountTypeInput" name="tipo" value="">
+                        <button class="btn btn-brand" id="selectAccountTypeBtn" type="submit" disabled>
+                            <i class="bi bi-check2-square me-1"></i> Seleccionar
+                        </button>
+                        <a class="btn btn-outline-secondary" th:href="@{/onboarding/1}">Cerrar</a>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<script th:src="@{/js/table-pagination.js}"></script>
+<script th:src="@{/js/table-row-selection.js}"></script>
+<script>
+    (function () {
+        const table = document.getElementById("accountTypeTable");
+        const selectBtn = document.getElementById("selectAccountTypeBtn");
+        const selectedInput = document.getElementById("selectedAccountTypeInput");
+        const selectedLabel = document.getElementById("selectedAccountTypeLabel");
+        const form = document.getElementById("accountTypeForm");
+
+        if (!table || !selectBtn || !selectedInput || !selectedLabel || !form) {
+            return;
+        }
+
+        if (!window.TableRowSelection) {
+            return;
+        }
+
+        window.TableRowSelection.initTable(table, {
+            rowSelector: "tr[data-tipo]",
+            initialSelectFirst: true,
+            flashOnSelect: true,
+            onSelect: function (row) {
+                const selectedType = row.getAttribute("data-tipo") || "";
+                selectedInput.value = selectedType;
+                selectedLabel.textContent = selectedType || "Ninguno";
+                selectBtn.disabled = !selectedType;
+            },
+            onDoubleClick: function () {
+                form.requestSubmit();
+            }
+        });
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/onboarding-layout :: commonAssets('Relacionar Personas - Captura')}"></th:block>
+</head>
+<body class="bg-soft onboarding-layout has-fixed-actions">
+<div class="container-fluid px-2 px-md-4 py-3 py-md-4 onboarding-shell">
+    <div class="row g-3 g-lg-4 align-items-start onboarding-grid">
+        <aside th:replace="~{fragments/onboarding-layout :: sidebar}"></aside>
+
+        <main class="col-12 col-lg-10 onboarding-main">
+            <header th:replace="~{fragments/onboarding-layout :: topbar}"></header>
+            <ul th:replace="~{fragments/onboarding-layout :: moduleTabs('relacionar-personas')}"></ul>
+
+
+            <section class="card border-0 shadow-sm rounded-4 relation-window">
+                <div class="card-body p-3 p-md-4">
+                    <div class="relation-panel mb-3">
+                        <h6 class="relation-title">Datos Persona 1</h6>
+                        <div class="row g-2 align-items-end">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Identificación Oficial</label>
+                                <input class="form-control form-control-sm" type="text" value="1581274695">
+                            </div>
+                            <div class="col-12 col-md-2 d-grid">
+                                <button class="btn btn-brand btn-sm" type="button">Buscar</button>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">Nombre</label>
+                                <input class="form-control form-control-sm" type="text" value="RICARDO ESPINOSA RAMOS">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relation-panel mb-3">
+                        <h6 class="relation-title">Datos Persona 2</h6>
+                        <div class="row g-2 align-items-end">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Identificación Oficial</label>
+                                <input class="form-control form-control-sm" type="text" placeholder="Capture identificación">
+                            </div>
+                            <div class="col-12 col-md-2 d-grid">
+                                <button class="btn btn-brand btn-sm" type="button">Buscar</button>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">Nombre</label>
+                                <input class="form-control form-control-sm" type="text" placeholder="Nombre de persona 2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-2">
+                        <div class="col-12 col-md-4">
+                            <label class="form-label">Tipo Relación</label>
+                            <select class="form-select form-select-sm">
+                                <option value="">Selecciona una opción</option>
+                                <option>CONYUGE DE</option>
+                                <option>CONYUGE DE FACTO DE</option>
+                                <option>PADRE O MADRE DE</option>
+                                <option>HIJO/A DE</option>
+                                <option>HIJO/A DE</option>
+                                <option>ABUELO/A DE</option>
+                                <option>NIETO/A DE</option>
+                                <option>HERMANO/A DE</option>
+                                <option>TIO/A DE</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <label class="form-label"></label>
+                            <textarea class="form-control form-control-sm" rows="3" placeholder="Detalle de la relación"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-12 col-md-3">
+                            <label class="form-label">Fecha inicio</label>
+                            <input class="form-control form-control-sm" type="date">
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label">Fecha fin</label>
+                            <input class="form-control form-control-sm" type="date">
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label">Fecha alta</label>
+                            <input class="form-control form-control-sm" type="date">
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <a class="btn btn-outline-secondary" th:href="@{/onboarding/relacionar-personas}">Inicio</a>
+
+                        <button class="btn btn-outline-secondary" type="button">Nuevo</button>
+                        <button class="btn btn-brand" type="button"><i class="bi bi-check-circle me-1"></i>Guardar</button>
+                        <a class="btn btn-outline-secondary ms-auto" th:href="@{/onboarding/relacionar-personas}">Cancelar</a>
+                    </div>
+                </div>
+            </section>
+
+            <th:block th:replace="~{fragments/onboarding-layout :: fixedBackAction}"></th:block>
+        </main>
+    </div>
+</div>
+</body>
+</html>

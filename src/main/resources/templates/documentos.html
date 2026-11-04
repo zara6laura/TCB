@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/onboarding-layout :: commonAssets('Documentos')}"></th:block>
+</head>
+<body class="bg-soft onboarding-layout has-fixed-actions">
+<div class="container-fluid px-2 px-md-4 py-3 py-md-4 onboarding-shell">
+    <div class="row g-3 g-lg-4 align-items-start onboarding-grid">
+        <aside th:replace="~{fragments/onboarding-layout :: sidebar}"></aside>
+
+        <main class="col-12 col-lg-10 onboarding-main">
+            <header th:replace="~{fragments/onboarding-layout :: topbar}"></header>
+            <ul th:replace="~{fragments/onboarding-layout :: moduleTabs('documentos')}"></ul>
+
+
+            <div class="onboarding-content-scroll">
+                <section class="card border-0 shadow rounded-4 doc-workspace-card">
+                    <div class="card-body p-3 p-md-4 doc-workspace-body">
+                        <div class="document-type-strip mb-3" id="documentTypeGrid"></div>
+                        <div class="row g-3" id="selectedTypeForms"></div>
+                        <div class="document-bottom-bar mt-3 p-3 rounded-4">
+                            <div class="document-metrics">
+                                <div class="document-progress-wrap">
+                                    <div class="fw-semibold"><span id="capturedCount">0</span>/5 documentos capturados</div>
+                                    <div class="document-progress-line mt-1">
+                                        <span id="captureProgressBar"></span>
+                                    </div>
+                                    <small class="text-muted"><span id="capturePercent">0</span>%</small>
+                                </div>
+                                <div class="document-progress-wrap document-progress-success">
+                                    <div class="fw-semibold"> <span id="savedPercent">0</span>% <i class="bi bi-graph-up-arrow ms-1"></i></div>
+                                    <div class="document-progress-line mt-1 success">
+                                        <span id="savedProgressBar"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="document-bottom-actions">
+                                <button class="btn btn-brand btn-sm px-3" type="button"><i class="bi bi-check-circle-fill me-1"></i>Guardar</button>
+                                <button class="btn btn-outline-secondary btn-sm px-3" type="button">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+
+            <th:block th:replace="~{fragments/onboarding-layout :: fixedBackAction}"></th:block>
+        </main>
+
+    </div>
+</div>
+<script>
+    (function () {
+        const typeGrid = document.getElementById("documentTypeGrid");
+        const formsContainer = document.getElementById("selectedTypeForms");
+        const capturedCount = document.getElementById("capturedCount");
+        const capturePercent = document.getElementById("capturePercent");
+        const captureProgressBar = document.getElementById("captureProgressBar");
+        const savedPercent = document.getElementById("savedPercent");
+        const savedProgressBar = document.getElementById("savedProgressBar");
+
+        if (!typeGrid || !formsContainer || !capturedCount || !capturePercent || !captureProgressBar || !savedPercent || !savedProgressBar) {
+            return;
+        }
+
+        const documentTypes = [
+            { id: "ine", label: "INE", icon: "bi-person-badge", selected: true, fileName: "", fileSize: "" },
+            { id: "comprobante", label: "Comprobante Domicilio", icon: "bi-house", selected: true, fileName: "", fileSize: "" },
+            { id: "cedula", label: "Cédula de identificación y conocimiento del cliente", icon: "bi-person-vcard", selected: true, fileName: "cedula.pdf", fileSize: "245 KB" },
+            { id: "conocimiento", label: "Otro", icon: "bi-journal-text", selected: false, fileName: "conocimiento-cliente.pdf", fileSize: "189 KB" },
+
+        ];
+
+        function formatFileSize(bytes) {
+            if (!bytes) {8
+                return "0 KB";
+            }
+
+            if (bytes < 1024) {
+                return bytes + " B";
+            }
+
+            if (bytes < 1048576) {
+                return Math.round(bytes / 1024) + " KB";
+            }
+
+            return (bytes / 1048576).toFixed(1) + " MB";
+        }
+
+        function renderTypeCards() {
+            typeGrid.innerHTML = "";
+            typeGrid.style.gridTemplateColumns = "repeat(" + documentTypes.length + ", minmax(0, 1fr))";
+            documentTypes.forEach(function (type, index) {
+                const card = document.createElement("button");
+                card.type = "button";
+                card.className = "btn doc-type-card shadow-sm" + (type.selected ? " selected" : "") + (index === documentTypes.length - 1 ? " no-separator" : "");
+                card.setAttribute("data-doc-type", type.id);
+                card.innerHTML = `
+                    <span class="doc-state-dot${type.selected ? " selected" : ""}" aria-hidden="true">
+                        <i class="bi bi-check"></i>
+                    </span>
+                    <span class="doc-type-icon-wrap"><i class="bi ${type.icon}"></i></span>
+                    <div class="doc-type-label">${type.label}</div>
+                    <small class="doc-type-status badge rounded-pill ${type.selected ? "text-bg-success" : "text-bg-light"}">${type.selected ? "Seleccionado" : "No seleccionado"}</small>`;
+                typeGrid.appendChild(card);
+            });
+        }
+
+        function formTemplate(type) {
+            return `
+                <div class="col-12 col-xl-6">
+                    <div class="document-mini-form card border-0 shadow-sm h-100">
+                        <div class="card-body p-3">
+                        <h6 class="mb-2 d-flex align-items-center gap-2"><span class="doc-form-head-icon"><i class="bi ${type.icon}"></i></span>${type.label}</h6>
+                        <div class="mb-2">
+                            <label class="form-label">Tipo documento</label>
+                            <select class="form-select form-select-sm shadow-none">
+                                <option selected>${type.label}</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Fecha</label>
+                            <input class="form-control form-control-sm shadow-none" type="date" value="2026-10-09">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Tipo presentación</label>
+                            <div class="d-flex gap-3 pt-1">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="present-${type.id}" id="ori-${type.id}" checked>
+                                    <label class="form-check-label" for="ori-${type.id}">Original</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="present-${type.id}" id="cop-${type.id}">
+                                    <label class="form-check-label" for="cop-${type.id}">Copia</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="present-${type.id}" id="dup-${type.id}">
+                                    <label class="form-check-label" for="dup-${type.id}">Duplicado</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label">Adjuntos</label>
+                            <div class="document-attachment">
+                                <div class="document-file-meta">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                    <div class="fw-semibold" id="file-name-${type.id}">${type.fileName || "Sin archivo"}</div>
+                                    <small class="text-muted" id="file-size-${type.id}">${type.fileSize || "0 KB"}</small>
+                                </div>
+                                <button class="btn btn-sm btn-link text-danger p-0" type="button" data-file-remove="${type.id}" aria-label="Quitar archivo">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                            <div class="document-upload mt-2" data-file-upload="${type.id}">
+                                <i class="bi bi-plus"></i>
+                                <span>Cargar archivo</span>
+                            </div>
+                            <input class="d-none" type="file" id="file-input-${type.id}">
+                        </div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function renderForms() {
+            formsContainer.innerHTML = "";
+            documentTypes.filter(function (type) {
+                return type.selected;
+            }).forEach(function (type) {
+                formsContainer.insertAdjacentHTML("beforeend", formTemplate(type));
+            });
+        }
+
+        function syncStats() {
+            const selectedCount = documentTypes.filter(function (type) {
+                return type.selected;
+            }).length;
+            const total = documentTypes.length;
+            const percent = Math.round((selectedCount * 100) / total);
+            const saved = Math.min(90, 20 + (selectedCount * 20));
+            capturedCount.textContent = String(selectedCount);
+            capturePercent.textContent = String(percent);
+            captureProgressBar.style.width = percent + "%";
+            savedPercent.textContent = String(saved);
+            savedProgressBar.style.width = saved + "%";
+        }
+
+        function bindCardEvents() {
+            typeGrid.querySelectorAll(".doc-type-card").forEach(function (button) {
+                button.addEventListener("click", function () {
+                    const typeId = button.getAttribute("data-doc-type");
+                    const item = documentTypes.find(function (type) {
+                        return type.id === typeId;
+                    });
+                    if (!item) {
+                        return;
+                    }
+                    item.selected = !item.selected;
+                    if (!documentTypes.some(function (type) { return type.selected; })) {
+                        item.selected = true;
+                    }
+                    renderAll();
+                });
+            });
+        }
+
+        function bindUploadEvents() {
+            formsContainer.querySelectorAll("[data-file-upload]").forEach(function (trigger) {
+                trigger.addEventListener("click", function () {
+                    const id = trigger.getAttribute("data-file-upload");
+                    const input = document.getElementById("file-input-" + id);
+                    if (input) {
+                        input.click();
+                    }
+                });
+            });
+
+            formsContainer.querySelectorAll("input[type='file']").forEach(function (input) {
+                input.addEventListener("change", function () {
+                    const id = input.id.replace("file-input-", "");
+                    const item = documentTypes.find(function (type) {
+                        return type.id === id;
+                    });
+                    if (!item || !input.files || !input.files.length) {
+                        return;
+                    }
+                    item.fileName = input.files[0].name;
+                    item.fileSize = formatFileSize(input.files[0].size);
+                    renderAll();
+                });
+            });
+
+            formsContainer.querySelectorAll("[data-file-remove]").forEach(function (button) {
+                button.addEventListener("click", function () {
+                    const id = button.getAttribute("data-file-remove");
+                    const item = documentTypes.find(function (type) {
+                        return type.id === id;
+                    });
+                    if (!item) {
+                        return;
+                    }
+                    item.fileName = "";
+                    item.fileSize = "";
+                    renderAll();
+                });
+            });
+        }
+
+        function renderAll() {
+            renderTypeCards();
+            renderForms();
+            syncStats();
+            bindCardEvents();
+            bindUploadEvents();
+        }
+
+        renderAll();
+    })();
+</script>
+</body>
+</html>
