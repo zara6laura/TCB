@@ -445,7 +445,7 @@
                                                 <span class="badge text-bg-light border">Principal</span>
                                             </div>
                                             <div class="row g-2">
-                                                <div class="col-md-6"><label class="form-label  fw-bold">Célular:</label><input class="form-control" data-address-field="celular"></div>
+                                                <div class="col-md-6"><label class="form-label  fw-bold" for="domNumTelefDom">Célular:</label><input type="number" class="form-control" data-address-field="celular" id="domNumTelefDom" th:field="*{domNumTelefDom}" maxlength="10" autocomplete="off"></div>
                                                 <div class="col-md-6">
                                                     <label class="form-label  fw-bold"><span class="text-danger">*</span> País:</label>
                                                     <div class="row g-2">
@@ -464,7 +464,7 @@
                                                         <div class="col-12"><input class="form-control" data-address-field="entidad" readonly></div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6"><label class="form-label  fw-bold"><span class="text-danger">*</span> Código Postal:</label><input class="form-control" data-address-field="cp"></div>
+                                                <div class="col-md-6"><label class="form-label  fw-bold" for="domCodPostal"><span class="text-danger">*</span> Código Postal:</label><input type="number" class="form-control" data-address-field="cp" id="domCodPostal" th:field="*{domCodPostal}"  maxlength="5" autocomplete="off"></div>
                                                 <div class="col-md-2">
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="checkbox" data-address-field="localidadNoCodificada" id="localidadNoCodificadaHabitual">
@@ -490,8 +490,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6"><label class="form-label  fw-bold"><span class="text-danger">*</span> Colonia:</label><input class="form-control" data-address-field="colonia"></div>
-                                                <div class="col-md-6"><label class="form-label  fw-bold"><span class="text-danger">*</span> Calle:</label><input class="form-control" data-address-field="calle"></div>
-                                                <div class="col-md-4"><label class="form-label  fw-bold"><span class="text-danger">*</span> Núm Exterior:</label><input class="form-control" data-address-field="numExt"></div>
+                                                <div class="col-md-6"><label class="form-label  fw-bold" for="domNombCall"><span class="text-danger">*</span> Calle:</label><input type="text" class="form-control" data-address-field="calle" id="domNombCall" th:field="*{domNombCalle}"  maxlength="45" autocomplete="off"></div>
+                                                <div class="col-md-4"><label class="form-label  fw-bold" for="domNumExt"><span class="text-danger">*</span> Núm Exterior:</label><input  type="text" class="form-control" data-address-field="numExt" id="domNumExt" th:field="*{domNumExt}"  maxlength="4" autocomplete="off"></div>
                                                 <div class="col-md-2"><label class="form-label  fw-bold">Depto:</label><input class="form-control" data-address-field="depto"></div>
                                                 <div class="col-md-6"><label class="form-label  fw-bold">Correo:</label><input class="form-control" data-address-field="correo"></div>
                                             </div>
@@ -504,7 +504,7 @@
                                                 <span class="badge text-bg-light border">Complementario</span>
                                             </div>
                                             <div class="row g-2">
-                                                <div class="col-md-6"><label class="form-label  fw-bold">Célular:</label><input class="form-control" data-address-field="celular"></div>
+                                                <div class="col-md-6"><label class="form-label  fw-bold" for="domNumTelefDom">Célular:</label><input type="number" class="form-control" data-address-field="celular" id="domNumTelefDom" th:field="*{domNumTelefDom}" maxlength="10" autocomplete="off"></div>
                                                 <div class="col-md-6">
                                                     <label class="form-label  fw-bold"><span class="text-danger">*</span> País:</label>
                                                     <div class="row g-2">
@@ -523,7 +523,7 @@
                                                         <div class="col-12"><input class="form-control" data-address-field="entidad" readonly></div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6"><label class="form-label  fw-bold"><span class="text-danger">*</span> Código Postal:</label><input class="form-control" data-address-field="cp"></div>
+                                                <div class="col-md-6"><label class="form-label  fw-bold" for="domCodPostal"><span class="text-danger">*</span> Código Postal:</label><input type="number" class="form-control" data-address-field="cp" id="domCodPostal" th:field="*{domCodPostal}"  maxlength="5" autocomplete="off"></div>
                                                 <div class="col-md-2">
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="checkbox" data-address-field="localidadNoCodificada" id="localidadNoCodificadaFiscal">
@@ -549,10 +549,10 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6"><label class="form-label  fw-bold"><span class="text-danger">*</span> Colonia:</label><input class="form-control" data-address-field="colonia"></div>
-                                                <div class="col-md-6"><label class="form-label  fw-bold"><span class="text-danger">*</span> Calle:</label><input class="form-control" data-address-field="calle"></div>
-                                                <div class="col-md-4"><label class="form-label  fw-bold"><span class="text-danger">*</span> Núm Exterior:</label><input class="form-control" data-address-field="numExt"></div>
+                                                <div class="col-md-6"><label class="form-label  fw-bold" for="domNombCalle"><span class="text-danger">*</span> Calle:</label><input type="text" class="form-control" data-address-field="calle" id="domNombCalle" th:field="*{domNombCalle}"  maxlength="45" autocomplete="off"></div>
+                                                <div class="col-md-4"><label class="form-label  fw-bold" for="domNumEx"><span class="text-danger">*</span> Núm Exterior:</label><input  type="text" class="form-control" data-address-field="numExt" id="domNumEx" th:field="*{domNumExt}"  maxlength="4" autocomplete="off"></div>
                                                 <div class="col-md-2"><label class="form-label  fw-bold">Depto:</label><input class="form-control" data-address-field="depto"></div>
-                                                <div class="col-md-6"><label class="form-label  fw-bold">Correo:</label><input class="form-control" data-address-field="correo"></div>
+                                                <div class="col-md-6"><label class="form-label  fw-bold" for="nombCorreo">Correo:</label><input type="text" class="form-control" data-address-field="correo" id="nombCorreo" th:field="*{nombCorreo}"  maxlength="50" autocomplete="off"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -592,8 +592,8 @@
                                                 <div class="col-8"><input type="number" id="transNumDepo" class="form-control" th:field="*{transNumDepo}" maxlength="5" autocomplete="off"></div>
                                             </div>
                                             <div class="row g-2 align-items-end">
-                                                <div class="col-4"><label class="form-label mb-0  fw-bold">Importe:</label></div>
-                                                <div class="col-8"><input id="transImptDepoInput" class="form-control"></div>
+                                                <div class="col-4"><label class="form-label mb-0  fw-bold" for="transImptDepo">Importe:</label></div>
+                                                <div class="col-8"><input type="number" id="transImptDepo" class="form-control" th:field="*{transImptDepo}" maxlength="11" autocomplete="off"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -601,12 +601,12 @@
                                         <div class="data-box h-100">
                                             <p class="fw-semibold mb-2  fw-bold">Retiros</p>
                                             <div class="row g-2 align-items-end mb-2">
-                                                <div class="col-4"><label class="form-label mb-0  fw-bold">Número:</label></div>
-                                                <div class="col-8"><input id="transNumRetiInput" class="form-control"></div>
+                                                <div class="col-4"><label class="form-label mb-0  fw-bold" for="transNumReti">Número:</label></div>
+                                                <div class="col-8"><input type="number" id="transNumReti" class="form-control" th:field="*{transNumReti}" maxlength="5" autocomplete="off"></div>
                                             </div>
                                             <div class="row g-2 align-items-end">
-                                                <div class="col-4"><label class="form-label mb-0  fw-bold">Importe:</label></div>
-                                                <div class="col-8"><input id="transImptRetiInput" class="form-control"></div>
+                                                <div class="col-4"><label class="form-label mb-0  fw-bold" for="transImptReti">Importe:</label></div>
+                                                <div class="col-8"><input type="number" id="transImptReti" class="form-control" th:field="*{transImptReti}" maxlength="11" autocomplete="off"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -614,8 +614,8 @@
                             </div>
 
                             <div class="row g-2 align-items-center mt-3">
-                                <div class="col-md-6"><label class="form-label mb-0  fw-bold">Indique el monto mensual aprox. de sus ingresos:</label></div>
-                                <div class="col-md-3"><input id="fteingrMtoMenIngresosInput" class="form-control"></div>
+                                <div class="col-md-6"><label class="form-label mb-0  fw-bold" for="fteingrMtoMenIngresos">Indique el monto mensual aprox. de sus ingresos:</label></div>
+                                <div class="col-md-3"><input type="number" id="fteingrMtoMenIngresos" class="form-control" th:field="*{transImptReti}" maxlength="11" autocomplete="off"></div>
                                 <div class="col-md-3"><span>pesos M.N.</span></div>
                             </div>
                             <br>
@@ -683,11 +683,11 @@
 
                                 <p class="data-box-title mt-3 mb-2">La cuenta será utilizada para manejo de recursos:</p>
                                 <div class="row g-2 align-items-center">
-                                    <div class="col-md-2"><span class="fw-bold">Propios en un:</span></div>
-                                    <div class="col-md-2"><input id="opereaPorcPropiosInput" class="form-control"></div>
+                                    <div class="col-md-2"><span class="fw-bold" >Propios en un:</span></div>
+                                    <div class="col-md-2"><input type="number" id="opereaPorcPropios" class="form-control" th:field="*{opereaPorcPropios}" maxlength="3" autocomplete="off"></div>
                                     <div class="col-md-1"><span>%</span></div>
                                     <div class="col-md-3"><span class="fw-bold">De un proveedor de recursos:</span></div>
-                                    <div class="col-md-2"><input id="opereaPorcTercerosInput" class="form-control"></div>
+                                    <div class="col-md-2"><input type="number" id="opereaPorcTerceros" class="form-control" th:field="*{opereaPorcTerceros}" maxlength="3" autocomplete="off"></div>
                                     <div class="col-md-1"><span>%</span></div>
                                 </div>
                             </div>
@@ -706,8 +706,8 @@
                                             <label class="form-check-label" for="pepTitularSi">Sí</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-2"><label class="form-label mb-0">¿Cuál?</label></div>
-                                    <div class="col-md-8"><input id="personaPoliExpuestaDescInput" class="form-control"></div>
+                                    <div class="col-md-2"><label class="form-label mb-0" for="personaPoliExpuestaDesc">¿Cuál?</label></div>
+                                    <div class="col-md-8"><input type="text" id="personaPoliExpuestaDesc" class="form-control" th:field="*{personaPoliExpuestaDesc}"  autocomplete="off"></div>
                                 </div>
                             </div>
 
@@ -724,10 +724,10 @@
                                             <label class="form-check-label" for="pepRelacionadoSi">Sí</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-2"><label class="form-label mb-0">¿Cuál?</label></div>
-                                    <div class="col-md-8"><input id="relPersonaPoliExpuestDescInput" class="form-control"></div>
-                                    <div class="col-md-2"><label class="form-label mb-0">Nombre</label></div>
-                                    <div class="col-md-10"><input id="relPersonaPoliExpuestNomInput" class="form-control"></div>
+                                    <div class="col-md-2"><label class="form-label mb-0" for="relPersonaPoliExpuestDesc">¿Cuál?</label></div>
+                                    <div class="col-md-8"><input type="text" id="relPersonaPoliExpuestDesc" class="form-control" th:field="*{relPersonaPoliExpuestDesc}"  autocomplete="off"></div>
+                                    <div class="col-md-2"><label class="form-label mb-0" for="relPersonaPoliExpuestNom">Nombre</label></div>
+                                    <div class="col-md-10"><input type="text" id="relPersonaPoliExpuestNom" class="form-control" th:field="*{relPersonaPoliExpuestNom}"  autocomplete="off"></div>
                                 </div>
                             </div>
 
