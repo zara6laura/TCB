@@ -64,11 +64,10 @@
         }
 
         const documentTypes = [
-            { id: "ine", label: "INE", icon: "bi-person-badge", selected: true, fileName: "", fileSize: "" },
-            { id: "comprobante", label: "Comprobante Domicilio", icon: "bi-house", selected: true, fileName: "", fileSize: "" },
-            { id: "cedula", label: "Cédula de identificación y conocimiento del cliente", icon: "bi-person-vcard", selected: true, fileName: "cedula.pdf", fileSize: "245 KB" },
-            { id: "conocimiento", label: "Otro", icon: "bi-journal-text", selected: false, fileName: "conocimiento-cliente.pdf", fileSize: "189 KB" },
-
+            { id: "doc1", label: "CREDENCIAL IFE", icon: "bi-person-badge", selected: true, fileName: "", fileSize: "" },
+            { id: "doc2", label: "CEDLA.CNCMNTO.CL.PERS.FISICAS", icon: "bi-person-vcard", selected: true, fileName: "cedula.pdf", fileSize: "245 KB" },
+            { id: "doc3", label: "COMP. DOM. RECIBO DE LUZ", icon: "bi-house", selected: true, fileName: "", fileSize: "" },
+            { id: "doc4", label: "DOCUMENTOS DE PAGO", icon: "bi-cash-stack", selected: false, fileName: "documentos-pago.pdf", fileSize: "189 KB" }
         ];
 
         function formatFileSize(bytes) {

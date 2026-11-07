@@ -128,4 +128,23 @@ public class AltaClienteRequestDto {
     private String codDoc3;
     @JsonProperty("DESC-COD3")
     private String descCod3;
+    @JsonProperty("COD-DOC4")
+    private String codDoc4;
+    @JsonProperty("DESC-COD4")
+    private String descCod4;
+    @JsonProperty("OPEREA-DEPOSITOS")
+    private String operaDepositos;
+    @JsonProperty("OPEREA-RETIROS")
+    private String operaRetiros;
+    @JsonProperty("OPEREA-COBRO-GIROS")
+    private String operaCobroGiros;
+    @JsonProperty("OPEREA-TRANSFERENCIAS")
+    private String operaTransferencias;
+    @JsonProperty("USOCTA-ADM-INGRE-Y-GASTS")
+    private String usoctaAdmIngreYGasts;
+    @JsonProperty("USOCTA-DEPTO-NOMIN")
+    private String usoctaDeptoNomin;
+    @JsonProperty("DOM-REG-OCUPACION")
+    private String domRegOcupacion;
+
 }

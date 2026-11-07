@@ -308,19 +308,21 @@
                 savedEstadoSolicitud.value = est;
             }
             if (relationSavedBody) {
-                relationSavedBody.innerHTML = `
-                        <tr>
-                            <td>TITULAR</td>
-                            <td>1</td>
-                            <td>GRGRMN81120918</td>
-                            <td>GABRIEL MAURICIO PAZ SANTA ANA</td>
-                        </tr>
-                        <tr>
-                            <td>${tipoRel}</td>
-                            <td>1</td>
-                            <td>${idOficial}</td>
-                            <td>${nombre}</td>
-                        </tr>`;
+                // Build rows with textContent to avoid injecting untrusted HTML from form values.
+                relationSavedBody.textContent = "";
+                const rows = [
+                    ["TITULAR", "1", "GRGRMN81120918", "GABRIEL MAURICIO PAZ SANTA ANA"],
+                    [tipoRel, "1", idOficial, nombre]
+                ];
+                rows.forEach(function (cells) {
+                    const tr = document.createElement("tr");
+                    cells.forEach(function (cellValue) {
+                        const td = document.createElement("td");
+                        td.textContent = cellValue == null ? "" : String(cellValue);
+                        tr.appendChild(td);
+                    });
+                    relationSavedBody.appendChild(tr);
+                });
             }
 
             showRelationSaved();

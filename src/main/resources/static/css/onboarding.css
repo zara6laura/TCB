@@ -219,6 +219,41 @@ input[type="radio"] {
     box-shadow: 0 0 0 0.25rem rgba(180, 134, 14, 0.25);
 }
 
+.cellphone-input-group {
+    border: 1px solid #d4af37;
+    border-radius: 8px;
+    background: #fffdf7;
+}
+
+.cellphone-input-group:focus-within {
+    border-color: #b4860e;
+    box-shadow: 0 0 0 0.2rem rgba(180, 134, 14, 0.2);
+}
+
+.cellphone-prefix {
+    border: 0;
+    background: #fef3c7;
+    color: #7a5600;
+    font-weight: 700;
+}
+
+.cellphone-input {
+    border: 0;
+    background: transparent;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.cellphone-input:focus {
+    box-shadow: none !important;
+}
+
+.cellphone-help {
+    font-size: 0.75rem;
+    color: #7a5600;
+    font-weight: 600;
+}
+
 .official-id-group {
     border: 1px solid #d8dce3;
     border-radius: 8px;
@@ -1364,5 +1399,4 @@ body.account-open-scope.has-fixed-actions .onboarding-main {
     font-family: "Patria","noso Sans", "Helvetica", "Arial", sans-serif;
     color: #000;
 }
-
 

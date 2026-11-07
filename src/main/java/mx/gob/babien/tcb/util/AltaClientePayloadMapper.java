@@ -61,12 +61,15 @@ public class AltaClientePayloadMapper {
         normalized.setDomNombColonia(normalize(request.getDomNombColonia(), true));
         normalized.setDomCodPostal(normalize(request.getDomCodPostal(), false));
         normalized.setNombCorreo(normalize(request.getNombCorreo(), false));
-        normalized.setCodDoc1(normalize(request.getCodDoc1(), true));
-        normalized.setDescCod1(normalize(request.getDescCod1(), true));
-        normalized.setCodDoc2(normalize(request.getCodDoc2(), true));
-        normalized.setDescCod2(normalize(request.getDescCod2(), true));
-        normalized.setCodDoc3(normalize(request.getCodDoc3(), true));
-        normalized.setDescCod3(normalize(request.getDescCod3(), true));
+        normalized.setCodDoc1(normalizeDocumentValue(request.getCodDoc1(), true));
+        normalized.setDescCod1(normalizeDocumentValue(request.getDescCod1(), true));
+        normalized.setCodDoc2(normalizeDocumentValue(request.getCodDoc2(), true));
+        normalized.setDescCod2(normalizeDocumentValue(request.getDescCod2(), true));
+        normalized.setCodDoc3(normalizeDocumentValue(request.getCodDoc3(), true));
+        normalized.setDescCod3(normalizeDocumentValue(request.getDescCod3(), true));
+        normalized.setCodDoc4(normalizeDocumentValue(request.getCodDoc4(), true));
+        normalized.setDescCod4(normalizeDocumentValue(request.getDescCod4(), true));
+        normalized.setDomRegOcupacion(normalize(request.getDomRegOcupacion(), false));
         return normalized;
     }
 
@@ -103,7 +106,9 @@ public class AltaClientePayloadMapper {
         payload.put("FTEINGR-OTROS", emptyIfNull(request.getFteingrOtros()));
         payload.put("FTEINGR-DESCRIBA-OTROS", emptyIfNull(request.getFteingrDescribaOtros()));
         payload.put("FTEINGR-MTO-MEN-INGRESOS", emptyIfNull(request.getFteingrMtoMenIngresos()));
+        payload.put("USOCTA-ADM-INGRE-Y-GASTS", emptyIfNull(request.getUsoctaAdmIngreYGasts()));
         payload.put("USOCTA-PAGO-SERVS", emptyIfNull(request.getUsoctaPagoServs()));
+        payload.put("USOCTA-DEPTO-NOMIN", emptyIfNull(request.getUsoctaDeptoNomin()));
         payload.put("USOCTA-OTROS", emptyIfNull(request.getUsoctaOtros()));
         payload.put("USOCTA-DESCRIBA-OTROS", emptyIfNull(request.getUsoctaDescribaOtros()));
         payload.put("OPEREA-PORC-PROPIOS", emptyIfNull(request.getOpereaPorcPropios()));
@@ -127,6 +132,13 @@ public class AltaClientePayloadMapper {
         payload.put("DESC-COD2", emptyIfNull(request.getDescCod2()));
         payload.put("COD-DOC3", emptyIfNull(request.getCodDoc3()));
         payload.put("DESC-COD3", emptyIfNull(request.getDescCod3()));
+        payload.put("COD-DOC4", emptyIfNull(request.getCodDoc4()));
+        payload.put("DESC-COD4", emptyIfNull(request.getDescCod4()));
+        payload.put("OPEREA-DEPOSITOS", emptyIfNull(request.getOperaDepositos()));
+        payload.put("OPEREA-RETIROS", emptyIfNull(request.getOperaRetiros()));
+        payload.put("OPEREA-COBRO-GIROS", emptyIfNull(request.getOperaCobroGiros()));
+        payload.put("OPEREA-TRANSFERENCIAS", emptyIfNull(request.getOperaTransferencias()));
+        payload.put("DOM-REG-OCUPACION", emptyIfNull(request.getDomRegOcupacion()));
         return payload;
     }
 
@@ -139,6 +151,11 @@ public class AltaClientePayloadMapper {
             return null;
         }
         return uppercase ? normalized.toUpperCase(Locale.ROOT) : normalized;
+    }
+
+    private static String normalizeDocumentValue(String value, boolean uppercase) {
+        String normalized = normalize(value, uppercase);
+        return normalized == null ? " " : normalized;
     }
 
     private static String emptyIfNull(String value) {
