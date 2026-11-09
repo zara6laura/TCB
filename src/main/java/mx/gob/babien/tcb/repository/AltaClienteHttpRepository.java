@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Map;
 import mx.gob.babien.tcb.dto.AltaClienteResponseDto;
 import mx.gob.babien.tcb.exception.ServiceIntegrationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestClient;
@@ -11,6 +13,7 @@ import org.springframework.web.client.RestClient;
 @Repository
 public class AltaClienteHttpRepository implements AltaClienteRepository {
     private static final String ALTA_CLIENTE_PATH = "/tcb/altacliente";
+    private static final Logger LOGGER = LoggerFactory.getLogger(AltaClienteHttpRepository.class);
     private final RestClient restClient;
 
     public AltaClienteHttpRepository(RestClient restClient) {
@@ -20,6 +23,7 @@ public class AltaClienteHttpRepository implements AltaClienteRepository {
     @Override
     public AltaClienteResponseDto altaCliente(Map<String, String> payload) {
         try {
+            LOGGER.info("Payload enviado a altaCliente: {}", payload);
             JsonNode serviceResponse = restClient.post()
                     .uri(ALTA_CLIENTE_PATH)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -49,8 +53,10 @@ public class AltaClienteHttpRepository implements AltaClienteRepository {
 
             return new AltaClienteResponseDto(perfil, idInterna);
         } catch (ServiceIntegrationException exception) {
+            LOGGER.error("Error de integración en altaCliente. Payload enviado: {}", payload, exception);
             throw exception;
         } catch (RuntimeException exception) {
+            LOGGER.error("Error al consumir altaCliente. Payload enviado: {}", payload, exception);
             throw new ServiceIntegrationException("No fue posible consumir el servicio de alta cliente.", exception);
         }
     }

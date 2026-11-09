@@ -8,35 +8,13 @@
     const relationSaveBtn = document.getElementById("relationSaveBtn");
     const relationAddBtn = document.getElementById("relationAddBtn");
     const relationFormsContainer = document.getElementById("relationFormsContainer");
-    const relIdOficial = document.getElementById("relIdOficial");
-    const relNombrePersona = document.getElementById("relNombrePersona");
-    const relProdVendible = document.getElementById("relProdVendible");
-    const relEstadoSolicitud = document.getElementById("relEstadoSolicitud");
     const savedTipoRelacion = document.getElementById("savedTipoRelacion");
-    const savedProdVendible = document.getElementById("savedProdVendible");
-    const savedEstadoSolicitud = document.getElementById("savedEstadoSolicitud");
     const relationSavedBody = document.getElementById("relationSavedBody");
-    const accountTariffDropdown = document.getElementById("accountTariffDropdown");
-    const accountTariffToggle = document.getElementById("accountTariffToggle");
-    const accountTariffMenu = document.getElementById("accountTariffMenu");
     const accountTariffSelectedText = document.getElementById("accountTariffSelectedText");
-    const accountTariffOptions = document.querySelectorAll(".tariff-option");
     const accountTariffSelect = document.getElementById("accountTariffSelect");
-    const selectedTipoCuentaLabel = document.getElementById("selectedTipoCuentaLabel");
-    const selectedTipoCuentaLabe = document.getElementById("selectedTipoCuentaLabe");
     const accountNumAcInput = document.getElementById("accountNumAcInput");
     const activateAccountBtn = document.getElementById("activateAccountBtn");
     const accountStatusBadge = document.getElementById("accountStatusBadge");
-
-    function extractTipoCuentaFromOption(optionValue) {
-        if (!optionValue) {
-            return "";
-        }
-        const parts = optionValue.split("|").map(function (part) {
-            return part.trim();
-        });
-        return parts.length >= 5 ? parts[4] : "";
-    }
 
     function extractTarifaCodeFromOption(optionValue) {
         if (!optionValue) {
@@ -49,111 +27,21 @@
     }
 
     function syncSelectedTariff(optionValue) {
-        const tipoCuenta = extractTipoCuentaFromOption(optionValue);
         const tarifaCode = extractTarifaCodeFromOption(optionValue);
 
-        if (selectedTipoCuentaLabel && tipoCuenta) {
-            selectedTipoCuentaLabel.textContent = tipoCuenta;
-        }
-        if (selectedTipoCuentaLabe && tipoCuenta) {
-            selectedTipoCuentaLabe.textContent = tipoCuenta;
-        }
         if (accountNumAcInput && tarifaCode) {
             accountNumAcInput.value = tarifaCode;
         }
     }
 
-    function renderTariffOptions(selectedValue) {
-        accountTariffOptions.forEach(function (option) {
-            const value = option.getAttribute("data-value") || "";
-            const plainText = (option.getAttribute("data-label") || option.textContent).replace(/^✓\s*/, "");
-            option.setAttribute("data-label", plainText);
-            const isSelected = value === selectedValue;
-            option.classList.toggle("is-selected", isSelected);
-            option.textContent = (isSelected ? "✓ " : "") + plainText;
-        });
-    }
-
-    function closeTariffMenu() {
-        if (!accountTariffMenu || !accountTariffToggle) {
-            return;
-        }
-        accountTariffMenu.classList.add("d-none");
-        accountTariffToggle.setAttribute("aria-expanded", "false");
-    }
-
-    function openTariffMenu() {
-        if (!accountTariffMenu || !accountTariffToggle) {
-            return;
-        }
-        accountTariffMenu.classList.remove("d-none");
-        accountTariffToggle.setAttribute("aria-expanded", "true");
-    }
-
-    if (accountTariffSelect && accountTariffOptions.length) {
-        const serverTipoCuenta = selectedTipoCuentaLabel ? selectedTipoCuentaLabel.textContent.trim().toUpperCase() : "";
-        const serverTipoCuent = selectedTipoCuentaLabe ? selectedTipoCuentaLabe.textContent.trim().toUpperCase() : "";
-        let selectedValue = accountTariffSelect.value;
-
-        accountTariffOptions.forEach(function (option) {
-            const optionValue = option.getAttribute("data-value") || "";
-            const tipoCuentaOption = extractTipoCuentaFromOption(optionValue).toUpperCase();
-            if (serverTipoCuenta && tipoCuentaOption === serverTipoCuenta) {
-                selectedValue = optionValue;
-            }
-            if (serverTipoCuent && tipoCuentaOption === serverTipoCuent) {
-                selectedValue = optionValue;
-            }
-        });
-
-        if (!selectedValue) {
-            const firstValue = accountTariffOptions[0].getAttribute("data-value");
-            selectedValue = firstValue || "";
-        }
-
-        accountTariffSelect.value = selectedValue;
+    if (accountTariffSelect) {
+        const selectedValue = accountTariffSelect.value;
         if (accountTariffSelectedText) {
             accountTariffSelectedText.textContent = selectedValue.split("|").map(function (part) {
                 return part.trim();
             }).join(" | ");
         }
-        renderTariffOptions(selectedValue);
         syncSelectedTariff(selectedValue);
-
-        accountTariffOptions.forEach(function (option) {
-            option.addEventListener("click", function () {
-                const value = option.getAttribute("data-value") || "";
-                if (!value) {
-                    return;
-                }
-                accountTariffSelect.value = value;
-                if (accountTariffSelectedText) {
-                    accountTariffSelectedText.textContent = value.split("|").map(function (part) {
-                        return part.trim();
-                    }).join(" | ");
-                }
-                renderTariffOptions(value);
-                syncSelectedTariff(value);
-                closeTariffMenu();
-            });
-        });
-
-        if (accountTariffToggle) {
-            accountTariffToggle.addEventListener("click", function () {
-                if (accountTariffMenu && accountTariffMenu.classList.contains("d-none")) {
-                    openTariffMenu();
-                    return;
-                }
-                closeTariffMenu();
-            });
-        }
-
-        document.addEventListener("click", function (event) {
-            if (!accountTariffDropdown || accountTariffDropdown.contains(event.target)) {
-                return;
-            }
-            closeTariffMenu();
-        });
     }
 
     if (activateAccountBtn) {
@@ -293,19 +181,11 @@
         relationSaveBtn.addEventListener("click", function () {
             const relTipoRelacion = getMainRelationTypeControl();
             const tipoRel = relTipoRelacion && relTipoRelacion.value ? relTipoRelacion.value : "BENEFICIARIO";
-            const idOficial = relIdOficial && relIdOficial.value ? relIdOficial.value : "E1662170";
-            const nombre = relNombrePersona && relNombrePersona.value ? relNombrePersona.value : "JOSE MANUEL GARCIA GARCIA";
-            const prod = relProdVendible && relProdVendible.value ? relProdVendible.value : "CUENTAAHORRO";
-            const est = relEstadoSolicitud && relEstadoSolicitud.value ? relEstadoSolicitud.value : "SOLICITADO";
+            const idOficial = "E1662170";
+            const nombre = "JOSE MANUEL GARCIA GARCIA";
 
             if (savedTipoRelacion) {
                 savedTipoRelacion.value = tipoRel;
-            }
-            if (savedProdVendible) {
-                savedProdVendible.value = prod;
-            }
-            if (savedEstadoSolicitud) {
-                savedEstadoSolicitud.value = est;
             }
             if (relationSavedBody) {
                 // Build rows with textContent to avoid injecting untrusted HTML from form values.

@@ -17,8 +17,11 @@ import mx.gob.babien.tcb.service.AltaClienteService;
 import mx.gob.babien.tcb.util.CurpUtils;
 import mx.gob.babien.tcb.dto.AltaClienteRequestDto;
 import mx.gob.babien.tcb.dto.AltaClienteResponseDto;
+import mx.gob.babien.tcb.dto.CurpDatosResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,7 +29,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -84,6 +89,29 @@ public class OnboardingController {
     @GetMapping(ONBOARDING_BASE_PATH + "/documentos")
     public String documentos() {
         return REDIRECT_DOCUMENTS_STEP;
+    }
+
+    @ResponseBody
+    @GetMapping(ONBOARDING_BASE_PATH + "/curp-datos")
+    public ResponseEntity<CurpDatosResponseDto> curpDatos(@RequestParam(name = "curp") String curp) {
+        CurpData curpData = curpUtils.extractCurpData(curp);
+        CurpDatosResponseDto response = new CurpDatosResponseDto(
+                curpData.curp(),
+                curpData.genero(),
+                curpData.fechaNacimiento(),
+                curpData.entidadFederativa(),
+                curpData.pais()
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @ResponseBody
+    @PostMapping(
+            value = ONBOARDING_BASE_PATH + "/altacliente",
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<AltaClienteResponseDto> altaClienteApiSubmit(@Valid @RequestBody AltaClienteRequestDto request) {
+        return ResponseEntity.ok(altaClienteService.altaCliente(request));
     }
 
     @PostMapping(ONBOARDING_BASE_PATH + "/altacliente")

@@ -23,10 +23,7 @@ import mx.gob.babien.tcb.util.CurpUtils;
 
 @WebMvcTest({
         OnboardingController.class,
-        OnboardingApiController.class,
-        AperturaCuentaController.class,
-        RelacionarPersonasController.class,
-        RelacionarPersonasCapturaController.class
+        AperturaCuentaController.class
 })
 @Import(CurpUtils.class)
 class OnboardingControllerTest {

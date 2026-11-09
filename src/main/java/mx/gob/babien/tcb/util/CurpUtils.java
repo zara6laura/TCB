@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CurpUtils {
     private static final Pattern CURP_PATTERN = Pattern.compile("^[A-Z]{4}\\d{6}[HM][A-Z]{5}[A-Z0-9]\\d$");
-    private static final DateTimeFormatter BIRTH_DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
+    private static final DateTimeFormatter BIRTH_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd");
     private static final Map<String, String> CURP_STATE_MAP = Map.ofEntries(
             Map.entry("AS", "AGUASCALIENTES"),
             Map.entry("BC", "BAJA CALIFORNIA"),

@@ -314,6 +314,7 @@
                             <br>
                             <div class="row g-3">
                                 <div class="col-md-3">
+                                    <input type="number" id="idUsuario" class="form-control"  th:field="*{idUsuario}" maxlength="18" autocomplete="off">
                                     <label class="form-label  fw-bold" for="curp"><span class="text-danger">*</span>CURP:</label>
                                     <input type="text" id="curp" class="form-control"  th:field="*{curp}" maxlength="18" autocomplete="off">
                                             <div id="curpErrorMessage" class="form-text text-danger" th:text="${curpError}"></div>
@@ -390,7 +391,7 @@
                                                 <div class="row g-2">
                                                     <div class="col-8">
                                                         <select id="tpoId" class="form-select" th:field="*{tpoId}">
-                                                            <option value="51">INE</option>
+                                                            <option th:value="51">INE</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -403,7 +404,7 @@
                                 </div>
                                 <div class="col-md-6"><label class="form-label  fw-bold" for="codPaisNal">País de nacionalidad:</label><select id="codPaisNal" class="form-select" th:field="*{codPaisNal}"><option value="">Selecciona un país</option><option th:each="pais : ${catalogoPaises}" th:value="${pais.code}" th:text="${pais.description}"></option></select></div>
                                 <div class="col-md-6"><label class="form-label  fw-bold" for="codPaisRes">País de residencia:</label><select id="codPaisRes" class="form-select" th:field="*{codPaisRes}"><option value="">Selecciona un país</option><option th:each="pais : ${catalogoPaises}" th:value="${pais.code}" th:text="${pais.description}"></option></select></div>
-                                <div class="col-md-6"><label class="form-label  fw-bold">Sucursal:</label><input id="numSucInput" class="form-control" th:field="*{numSuc}" maxlength="4" readonly></div>
+                                <div class="col-md-6"><label class="form-label  fw-bold">Sucursal:</label><input id="numSucInput" class="form-control" th:field="*{numSuc}" maxlength="4" ></div>
                                <input type="hidden" id="domRegOcupacion" class="form-control" th:field="*{domRegOcupacion}" th:value="1">
                                 <div class="col-md-6">
                                     <label class="form-label  fw-bold" for="regFisc">Regímen fiscal:</label>
@@ -413,7 +414,7 @@
                                 </div>
 
                             </div>
-<br>
+                            <br>
                             <div class="row g-3">
 
 
@@ -457,7 +458,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4"><label class="form-label  fw-bold" for="domNombColonia"><span class="text-danger">*</span> Colonia:</label><input type="hidden" id="domNombColonia" th:field="*{domNombColonia}" class="form-control" maxlength="60"><input class="form-control" data-address-field="colonia"></div>
+                                                <div class="col-md-4"><label class="form-label  fw-bold" for="domNombColonia"><span class="text-danger">*</span> Colonia:</label><input type="text" id="domNombColonia" th:field="*{domNombColonia}" class="form-control" data-address-field="colonia" maxlength="60" autocomplete="off"></div>
                                                 <div class="col-md-4">
                                                     <label class="form-label  fw-bold" for="domTipoCalle"><span class="text-danger">*</span> Tipo de Calle:</label>
                                                     <div class="row g-2">
@@ -467,7 +468,7 @@
                                                 <div class="col-md-4"><label class="form-label  fw-bold" for="domNombCall"><span class="text-danger">*</span> Calle:</label><input type="text" class="form-control" data-address-field="calle" id="domNombCall" th:field="*{domNombCalle}"  maxlength="45" autocomplete="off"></div>
                                                 <div class="col-md-4"><label class="form-label  fw-bold" for="domNumExt"><span class="text-danger">*</span> Núm Exterior:</label><input  type="text" class="form-control" data-address-field="numExt" id="domNumExt" th:field="*{domNumExt}"  maxlength="4" autocomplete="off"></div>
                                                 <div class="col-md-2"><label class="form-label  fw-bold">Número Interior:</label><input class="form-control" id="domNumIn" th:field="*{domNumInt}" maxlength="3" data-address-field="domNumInt"></div>
-                                                <div class="col-md-6"><label class="form-label  fw-bold">Correo:</label><input class="form-control" data-address-field="correo"></div>
+                                                <div class="col-md-6"><label class="form-label  fw-bold" for="nombCorreo">Correo:</label><input type="email" id="nombCorreo" class="form-control" data-address-field="correo" th:field="*{nombCorreo}" maxlength="60" autocomplete="off"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -478,9 +479,9 @@
                                                 <span class="badge text-bg-light border">Complementario</span>
                                             </div>
                                             <div class="row g-2">
-                                                <div class="col-md-6"><label class="form-label  fw-bold" for="domNumTelefDom">Célular:</label><input type="number" class="form-control" data-address-field="celular" id="domNumTelefDo" th:field="*{domNumTelefDom}" maxlength="10" autocomplete="off"></div>
+                                                <div class="col-md-6"><label class="form-label  fw-bold" for="domNumTelefDo">Célular:</label><input type="number" class="form-control" data-address-field="celular" id="domNumTelefDo" maxlength="10" autocomplete="off"></div>
 
-                                                <div class="col-md-4"><label class="form-label  fw-bold" for="domCodPostal"><span class="text-danger">*</span> Código Postal:</label><input type="number" class="form-control" data-address-field="cp" id="domCodPosta" th:field="*{domCodPostal}"  maxlength="5" autocomplete="off"></div>
+                                                <div class="col-md-4"><label class="form-label  fw-bold" for="domCodPosta"><span class="text-danger">*</span> Código Postal:</label><input type="number" class="form-control" data-address-field="cp" id="domCodPosta"  maxlength="5" autocomplete="off"></div>
                                                 <div class="col-md-2">
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="checkbox" data-address-field="localidadNoCodificada" id="localidadNoCodificadaHabitua">
@@ -488,17 +489,17 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4"><label class="form-label  fw-bold" for="domNombColonia"><span class="text-danger">*</span> Colonia:</label><input type="hidden" id="domNombColoni" th:field="*{domNombColonia}" class="form-control" maxlength="60"><input class="form-control" data-address-field="colonia"></div>
+                                                <div class="col-md-4"><label class="form-label  fw-bold" for="domNombColoni"><span class="text-danger">*</span> Colonia:</label><input type="text" id="domNombColoni" class="form-control" data-address-field="colonia" maxlength="60" autocomplete="off"></div>
                                                 <div class="col-md-4">
                                                     <label class="form-label  fw-bold" for="domTipoCalleFiscal"><span class="text-danger">*</span> Tipo de Calle:</label>
                                                     <div class="row g-2">
-                                                        <div class="col-12"><select id="domTipoCalleFiscal" class="form-select" data-address-field="tipoCalle" th:field="*{domTipoCalle}"><option value="">Selecciona tipo de calle</option><option th:each="tipoCalle : ${catalogoTiposCalle}" th:value="${tipoCalle.code}" th:text="${tipoCalle.description}"></option></select></div>
+                                                        <div class="col-12"><select id="domTipoCalleFiscal" class="form-select" data-address-field="tipoCalle"><option value="">Selecciona tipo de calle</option><option th:each="tipoCalle : ${catalogoTiposCalle}" th:value="${tipoCalle.code}" th:text="${tipoCalle.description}"></option></select></div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4"><label class="form-label  fw-bold" for="domNombCall"><span class="text-danger">*</span> Calle:</label><input type="text" class="form-control" data-address-field="calle" id="domNombCal" th:field="*{domNombCalle}"  maxlength="45" autocomplete="off"></div>
-                                                <div class="col-md-4"><label class="form-label  fw-bold" for="domNumExt"><span class="text-danger">*</span> Núm Exterior:</label><input  type="text" class="form-control" data-address-field="numExt" id="domNumEx" th:field="*{domNumExt}"  maxlength="4" autocomplete="off"></div>
-                                                <div class="col-md-2"><label class="form-label  fw-bold">Número Interior:</label><input class="form-control" id="domNumI" th:field="*{domNumInt}" maxlength="3" data-address-field="domNumInt"></div>
-                                                <div class="col-md-6"><label class="form-label  fw-bold">Correo:</label><input class="form-control" data-address-field="correo"></div>
+                                                <div class="col-md-4"><label class="form-label  fw-bold" for="domNombCal"><span class="text-danger">*</span> Calle:</label><input type="text" class="form-control" data-address-field="calle" id="domNombCal"  maxlength="45" autocomplete="off"></div>
+                                                <div class="col-md-4"><label class="form-label  fw-bold" for="domNumEx"><span class="text-danger">*</span> Núm Exterior:</label><input  type="text" class="form-control" data-address-field="numExt" id="domNumEx"  maxlength="4" autocomplete="off"></div>
+                                                <div class="col-md-2"><label class="form-label  fw-bold" for="domNumI">Número Interior:</label><input class="form-control" id="domNumI" maxlength="3" data-address-field="domNumInt"></div>
+                                                <div class="col-md-6"><label class="form-label  fw-bold" for="nombCorreoFiscal">Correo:</label><input type="email" id="nombCorreoFiscal" class="form-control" data-address-field="correo" maxlength="60" autocomplete="off"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -890,7 +891,7 @@
 
                                                 <div class="col-12 col-md-2">
                                                     <label class="form-label fw-bold mb-1">Número de sucursal:</label>
-                                                    <input class="form-control form-control-sm" type="text">
+                                                    <input class="form-control form-control-sm" type="text" >
                                                 </div>
                                                 <div class="col-12 col-md-4">
                                                     <label class="form-label fw-bold mb-1">Número de Acuerdo:</label>
@@ -1501,6 +1502,20 @@
             }
         }
 
+        function normalizeDateForDateInput(rawDate) {
+            if (!rawDate) {
+                return "";
+            }
+            const trimmed = String(rawDate).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+                return trimmed;
+            }
+            if (/^\d{4}\/\d{2}\/\d{2}$/.test(trimmed)) {
+                return trimmed.replace(/\//g, "-");
+            }
+            return "";
+        }
+
         async function loadCurpData() {
             const curp = curpInput.value.trim().toUpperCase();
             curpInput.value = curp;
@@ -1510,7 +1525,13 @@
                 return;
             }
 
-            const response = await fetch("/onboarding/curp-datos?curp=" + encodeURIComponent(curp), {
+            const requestUrl = "/onboarding/curp-datos?curp=" + encodeURIComponent(curp);
+            console.log("Enviando solicitud CURP:", {
+                curp: curp,
+                url: requestUrl
+            });
+
+            const response = await fetch(requestUrl, {
                 headers: { "Accept": "application/json" }
             });
 
@@ -1522,7 +1543,8 @@
 
             const data = await response.json();
             if (data.fechaNacimiento) {
-                fecNacto.value = data.fechaNacimiento;
+                const normalizedDate = normalizeDateForDateInput(data.fechaNacimiento);
+                fecNacto.value = normalizedDate;
             }
             const entityCode = data.curp ? data.curp.substring(11, 13) : "";
             if (codEdoNac && entityCode) {

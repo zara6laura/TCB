@@ -43,8 +43,10 @@ public class AltaClientePayloadMapper {
         normalized.setFteingrOtros(normalize(request.getFteingrOtros(), false));
         normalized.setFteingrDescribaOtros(normalize(request.getFteingrDescribaOtros(), true));
         normalized.setFteingrMtoMenIngresos(normalize(request.getFteingrMtoMenIngresos(), false));
-        normalized.setUsoctaPagoServs(normalize(request.getUsoctaPagoServs(), false));
-        normalized.setUsoctaOtros(normalize(request.getUsoctaOtros(), false));
+        normalized.setUsoctaAdmIngreYGasts(normalizeSOrBlank(request.getUsoctaAdmIngreYGasts()));
+        normalized.setUsoctaPagoServs(normalizeSOrBlank(request.getUsoctaPagoServs()));
+        normalized.setUsoctaDeptoNomin(normalizeSOrBlank(request.getUsoctaDeptoNomin()));
+        normalized.setUsoctaOtros(normalizeSOrBlank(request.getUsoctaOtros()));
         normalized.setUsoctaDescribaOtros(normalize(request.getUsoctaDescribaOtros(), true));
         normalized.setOpereaPorcPropios(normalize(request.getOpereaPorcPropios(), false));
         normalized.setOpereaPorcTerceros(normalize(request.getOpereaPorcTerceros(), false));
@@ -69,6 +71,10 @@ public class AltaClientePayloadMapper {
         normalized.setDescCod3(normalizeDocumentValue(request.getDescCod3(), true));
         normalized.setCodDoc4(normalizeDocumentValue(request.getCodDoc4(), true));
         normalized.setDescCod4(normalizeDocumentValue(request.getDescCod4(), true));
+        normalized.setOperaDepositos(normalizeSOrBlank(request.getOperaDepositos()));
+        normalized.setOperaRetiros(normalizeSOrBlank(request.getOperaRetiros()));
+        normalized.setOperaCobroGiros(normalizeSOrBlank(request.getOperaCobroGiros()));
+        normalized.setOperaTransferencias(normalizeSOrBlank(request.getOperaTransferencias()));
         normalized.setDomRegOcupacion(normalize(request.getDomRegOcupacion(), false));
         return normalized;
     }
@@ -156,6 +162,11 @@ public class AltaClientePayloadMapper {
     private static String normalizeDocumentValue(String value, boolean uppercase) {
         String normalized = normalize(value, uppercase);
         return normalized == null ? " " : normalized;
+    }
+
+    private static String normalizeSOrBlank(String value) {
+        String normalized = normalize(value, true);
+        return "S".equals(normalized) ? "S" : " ";
     }
 
     private static String emptyIfNull(String value) {

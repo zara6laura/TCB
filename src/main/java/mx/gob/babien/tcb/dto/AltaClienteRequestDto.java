@@ -111,7 +111,7 @@ public class AltaClienteRequestDto {
     @JsonProperty("DOM-NUM-INT")
     private String domNumInt;
     @JsonProperty("DOM-NOMB-COLONIA")
-    private String   domNombColonia;
+    private String domNombColonia;
     @JsonProperty("DOM-COD-POSTAL")
     private String domCodPostal;
     @JsonProperty("NOMB-CORREO")
