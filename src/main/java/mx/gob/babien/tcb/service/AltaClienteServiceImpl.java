@@ -28,7 +28,7 @@ public class AltaClienteServiceImpl implements AltaClienteService {
     }
 
     private void validate(AltaClienteRequestDto request) {
-        requireField(request.getIdUsuario(), "ID-USUARIO");
+       // requireField(request.getIdUsuario(), "ID-USUARIO");
         requireField(request.getTpoId(), "TPO-ID");
         requireField(request.getNumId(), "NUM-ID");
         requireField(request.getNumSuc(), "NUM-SUC");

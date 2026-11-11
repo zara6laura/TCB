@@ -10,11 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AltaClienteRequestDto {
-    @JsonProperty("TARIF-CTA-PASIVO")
-    private String tarifCtaPasivo;
-    @JsonProperty("ID USUARIO")
-     @NotBlank(message = "El campo ID-USUARIO es obligatorio.")
-    private String idUsuario;
     @JsonProperty("TPO-ID")
     @NotBlank(message = "El campo TPO-ID es obligatorio.")
     private String tpoId;

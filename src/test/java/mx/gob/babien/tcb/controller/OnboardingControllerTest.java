@@ -18,8 +18,12 @@ import org.springframework.http.MediaType;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import mx.gob.babien.tcb.dto.AltaClienteResponseDto;
+import mx.gob.babien.tcb.dto.ClienteBusquedaResponseDto;
+import mx.gob.babien.tcb.dto.ClienteEncontradoDto;
 import mx.gob.babien.tcb.service.AltaClienteService;
+import mx.gob.babien.tcb.service.ClienteBusquedaService;
 import mx.gob.babien.tcb.util.CurpUtils;
+import java.util.List;
 
 @WebMvcTest({
         OnboardingController.class,
@@ -33,6 +37,9 @@ class OnboardingControllerTest {
 
     @MockBean
     private AltaClienteService altaClienteService;
+
+    @MockBean
+    private ClienteBusquedaService clienteBusquedaService;
 
     @Test
     void shouldRedirectRootToFirstOnboardingStep() throws Exception {
@@ -120,5 +127,38 @@ class OnboardingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.perfil").value("BAJO"))
                 .andExpect(jsonPath("$.idInterna").value("4232566"));
+    }
+
+    @Test
+    void shouldReturnClienteCoincidencesWhenSearching() throws Exception {
+        ClienteEncontradoDto cliente = new ClienteEncontradoDto();
+        cliente.setIdCte("4232566");
+        cliente.setNombre("GABRIEL");
+        cliente.setApePat("PAZ");
+        cliente.setApeMat("SANTA ANA");
+        cliente.setCurp("PASG800809HDFZNB05");
+        cliente.setGenero("H");
+        ClienteBusquedaResponseDto response = new ClienteBusquedaResponseDto();
+        response.setEstatus(0);
+        response.setCodigo("OK");
+        response.setMensaje("Coincidencias encontradas");
+        response.setClientes(List.of(cliente));
+        given(clienteBusquedaService.buscarCliente(any())).willReturn(response);
+
+        mockMvc.perform(post("/onboarding/buscar-cliente")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "CURP":"PASG800809HDFZNB05",
+                                  "NOMBRE":"GABRIEL",
+                                  "APAT":"PAZ",
+                                  "AMAT":"SANTA ANA",
+                                  "GENERO":"H"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.codigo").value("OK"))
+                .andExpect(jsonPath("$.clientes[0].idCte").value("4232566"))
+                .andExpect(jsonPath("$.clientes[0].curp").value("PASG800809HDFZNB05"));
     }
 }

@@ -14,9 +14,12 @@ import mx.gob.babien.tcb.exception.BadRequestException;
 import mx.gob.babien.tcb.exception.ServiceIntegrationException;
 import mx.gob.babien.tcb.model.CurpData;
 import mx.gob.babien.tcb.service.AltaClienteService;
+import mx.gob.babien.tcb.service.ClienteBusquedaService;
 import mx.gob.babien.tcb.util.CurpUtils;
 import mx.gob.babien.tcb.dto.AltaClienteRequestDto;
 import mx.gob.babien.tcb.dto.AltaClienteResponseDto;
+import mx.gob.babien.tcb.dto.ClienteBusquedaRequestDto;
+import mx.gob.babien.tcb.dto.ClienteBusquedaResponseDto;
 import mx.gob.babien.tcb.dto.CurpDatosResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,10 +62,16 @@ public class OnboardingController {
 
     private final CurpUtils curpUtils;
     private final AltaClienteService altaClienteService;
+    private final ClienteBusquedaService clienteBusquedaService;
 
-    public OnboardingController(CurpUtils curpUtils, AltaClienteService altaClienteService) {
+    public OnboardingController(
+            CurpUtils curpUtils,
+            AltaClienteService altaClienteService,
+            ClienteBusquedaService clienteBusquedaService
+    ) {
         this.curpUtils = curpUtils;
         this.altaClienteService = altaClienteService;
+        this.clienteBusquedaService = clienteBusquedaService;
     }
 
     @GetMapping("/")
@@ -112,6 +121,15 @@ public class OnboardingController {
     )
     public ResponseEntity<AltaClienteResponseDto> altaClienteApiSubmit(@Valid @RequestBody AltaClienteRequestDto request) {
         return ResponseEntity.ok(altaClienteService.altaCliente(request));
+    }
+
+    @ResponseBody
+    @PostMapping(
+            value = ONBOARDING_BASE_PATH + "/buscar-cliente",
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ClienteBusquedaResponseDto> buscarCliente(@RequestBody ClienteBusquedaRequestDto request) {
+        return ResponseEntity.ok(clienteBusquedaService.buscarCliente(request));
     }
 
     @PostMapping(ONBOARDING_BASE_PATH + "/altacliente")

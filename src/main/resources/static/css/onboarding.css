@@ -1,11 +1,17 @@
 :root {
     --brand-primary: #10312B;
     --brand-accent: #b4860e;
+    --ui-base-font-size: 12px;
 }
 
 body {
     font-family: "Segoe UI", Arial, sans-serif;
     color: #1a1a1a;
+}
+
+/* Global compact mode for onboarding screens at browser zoom 100%. */
+html {
+    font-size: var(--ui-base-font-size);
 }
 
 .bg-soft {
@@ -1399,4 +1405,3 @@ body.account-open-scope.has-fixed-actions .onboarding-main {
     font-family: "Patria","noso Sans", "Helvetica", "Arial", sans-serif;
     color: #000;
 }
-

@@ -12,8 +12,8 @@ public class AltaClientePayloadMapper {
     public AltaClienteRequestDto normalize(AltaClienteRequestDto source) {
         AltaClienteRequestDto request = source == null ? new AltaClienteRequestDto() : source;
         AltaClienteRequestDto normalized = new AltaClienteRequestDto();
-        normalized.setTarifCtaPasivo(normalize(request.getTarifCtaPasivo(), true));
-        normalized.setIdUsuario(normalize(request.getIdUsuario(), true));
+        //normalized.setTarifCtaPasivo(normalize(request.getTarifCtaPasivo(), true));
+        //normalized.setIdUsuario(normalize(request.getIdUsuario(), true));
         normalized.setTpoId(normalize(request.getTpoId(), true));
         normalized.setNumId(normalize(request.getNumId(), true));
         normalized.setNumSuc(normalize(request.getNumSuc(), true));
@@ -81,8 +81,8 @@ public class AltaClientePayloadMapper {
 
     public Map<String, String> toServicePayload(AltaClienteRequestDto request) {
         Map<String, String> payload = new LinkedHashMap<>();
-        payload.put("TARIF-CTA-PASIVO", emptyIfNull(request.getTarifCtaPasivo()));
-        payload.put("ID USUARIO", emptyIfNull(request.getIdUsuario()));
+       // payload.put("TARIF-CTA-PASIVO", emptyIfNull(request.getTarifCtaPasivo()));
+       // payload.put("ID USUARIO", emptyIfNull(request.getIdUsuario()));
         payload.put("TPO-ID", emptyIfNull(request.getTpoId()));
         payload.put("NUM-ID", emptyIfNull(request.getNumId()));
         payload.put("NUM-SUC", emptyIfNull(request.getNumSuc()));

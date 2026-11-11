@@ -271,6 +271,65 @@
         .step4-check-item.pending .step4-check-icon {
             color: #b54708;
         }
+
+        .coincidencias-modal-dialog {
+            max-width: min(96vw, 1800px);
+        }
+
+        #coincidenciasModal .modal-body {
+            padding: 1rem 1.25rem;
+            overflow: hidden;
+        }
+
+        #coincidenciasModal .table-responsive {
+            max-height: 68vh;
+            overflow: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+        }
+
+        #coincidenciasModal .table {
+            min-width: 2200px;
+            margin-bottom: 0;
+            font-size: 0.86rem;
+        }
+
+        #coincidenciasModal thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: #f8fafc;
+            white-space: nowrap;
+            padding: 0.6rem 0.7rem;
+        }
+
+        #coincidenciasModal tbody td {
+            min-width: 120px;
+            padding: 0.55rem 0.7rem;
+            vertical-align: top;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        #coincidenciasModal thead th:nth-child(6),
+        #coincidenciasModal tbody td:nth-child(6) {
+            min-width: 180px;
+        }
+
+        #coincidenciasModal thead th:nth-child(11),
+        #coincidenciasModal tbody td:nth-child(11) {
+            min-width: 320px;
+        }
+
+        #coincidenciasModal thead th:nth-child(13),
+        #coincidenciasModal tbody td:nth-child(13) {
+            min-width: 260px;
+        }
+
+        #coincidenciasModal thead th:nth-child(17),
+        #coincidenciasModal tbody td:nth-child(17) {
+            min-width: 220px;
+        }
     </style>
     <link  th:href="@{/css/open-account.css}" rel="stylesheet" />
 </head>
@@ -314,12 +373,12 @@
                             <br>
                             <div class="row g-3">
                                 <div class="col-md-3">
-                                    <input type="number" id="idUsuario" class="form-control"  th:field="*{idUsuario}" maxlength="18" autocomplete="off">
+                                    <input type="hidden" name="idUsuario" value="200">
                                     <label class="form-label  fw-bold" for="curp"><span class="text-danger">*</span>CURP:</label>
                                     <input type="text" id="curp" class="form-control"  th:field="*{curp}" maxlength="18" autocomplete="off">
                                             <div id="curpErrorMessage" class="form-text text-danger" th:text="${curpError}"></div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label class="form-label  fw-bold" for="nombre"> <span class="text-danger">*</span> Nombre:</label>
                                     <input type="text" id="nombre" class="form-control" th:field="*{nombre}" maxlength="30" autocomplete="off"></div>
                                 <div class="col-md-3">
@@ -328,7 +387,17 @@
                                 <div class="col-md-3">
                                     <label class="form-label  fw-bold" for="seguApe">Apellido materno:</label>
                                     <input type="text" id="seguApe" class="form-control" th:field="*{seguApe}" maxlength="30" autocomplete="off"></div>
-                                <div class="col-12 text-end">
+                                <div class="col-1 pt-4 d-flex justify-content-end align-items-center ">
+                                    <button id="buscarCoincidenciasBtn" class="btn btn-outline-dark btn-sm" type="button">
+                                        Buscar coincidencias
+                                    </button>
+
+                                </div>
+
+                                <div class="col-6 text-star">
+                                    <span id="coincidenciasInfo" class="small text-muted"></span>
+                                </div>
+                                    <div class="col-6 text-end">
                                     <div class="form-check mt-1 d-inline-block">
                                         <input class="form-check-input" type="checkbox" id="certificoCliente">
                                         <label class="form-check-label" for="certificoCliente">
@@ -336,6 +405,7 @@
                                         </label>
                                     </div>
                                 </div>
+
                                 <div class="col-md-2">
                                     <label class="form-label d-block fw-bold"><span class="text-danger">*</span>Género:</label>
                                     <div class="d-flex gap-3 pt-1">
@@ -874,7 +944,7 @@
                                                             <span id="accountTariffSelectedText">03 | 11 | B001 | 001 | CUENTA FÁCIL BIENESTAR</span>
                                                             <i class="bi bi-chevron-down"></i>
                                                         </button>
-                                                        <input id="accountTariffSelect" type="hidden" th:field="*{tarifCtaPasivo}">
+
                                                     </div>
                                                 </div>
 
@@ -1127,6 +1197,49 @@
                 </a>
             </div>
         </main>
+    </div>
+</div>
+<div class="modal fade" id="coincidenciasModal" tabindex="-1" aria-labelledby="coincidenciasModalLabel" aria-hidden="true">
+    <div class="modal-dialog coincidencias-modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="coincidenciasModalLabel">Coincidencias encontradas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="coincidenciasModalSummary" class="small text-muted mb-2"></div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle mb-0">
+                        <thead>
+                        <tr>
+                            <th scope="col">CLIENTE</th>
+                            <th scope="col">NOMBRE</th>
+                            <th scope="col">APEPAT</th>
+                            <th scope="col">APEMAT</th>
+                            <th scope="col">FECNAC</th>
+                            <th scope="col">CURP</th>
+                            <th scope="col">EDO</th>
+                            <th scope="col">GENERO</th>
+                            <th scope="col">TIPOID</th>
+                            <th scope="col">IDEXTPE</th>
+                            <th scope="col">DOMIC50</th>
+                            <th scope="col">NUMTELDOM</th>
+                            <th scope="col">CORREO</th>
+                            <th scope="col">CODPOST</th>
+                            <th scope="col">PAISNACTO</th>
+                            <th scope="col">RFC</th>
+                            <th scope="col">MUNICIPIO</th>
+                            <th scope="col">FECHAALTA</th>
+                        </tr>
+                        </thead>
+                        <tbody id="coincidenciasTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -1574,6 +1687,173 @@
             }
             loadCurpData().catch(function (error) {
                 console.error("Error al consultar CURP:", error);
+            });
+        });
+    })();
+</script>
+<script>
+    (function () {
+        const searchBtn = document.getElementById("buscarCoincidenciasBtn");
+        const coincidenciasInfo = document.getElementById("coincidenciasInfo");
+        const modalElement = document.getElementById("coincidenciasModal");
+        const modalSummary = document.getElementById("coincidenciasModalSummary");
+        const tableBody = document.getElementById("coincidenciasTableBody");
+        const curpInput = document.getElementById("curp");
+        const nombreInput = document.getElementById("nombre");
+        const apatInput = document.getElementById("primApe");
+        const amatInput = document.getElementById("seguApe");
+        const idCteInput = document.getElementById("idUsuario");
+        const generoHombre = document.getElementById("generoHombre");
+        const generoMujer = document.getElementById("generoMujer");
+
+        if (!searchBtn || !modalElement || !tableBody) {
+            return;
+        }
+
+        function setInfo(message, isError) {
+            if (!coincidenciasInfo) {
+                return;
+            }
+            coincidenciasInfo.textContent = message || "";
+            coincidenciasInfo.classList.toggle("text-danger", !!isError);
+            coincidenciasInfo.classList.toggle("text-muted", !isError);
+        }
+
+        function clearRows() {
+            tableBody.innerHTML = "";
+        }
+
+        function readGenero() {
+            if (generoHombre && generoHombre.checked) {
+                return "H";
+            }
+            if (generoMujer && generoMujer.checked) {
+                return "M";
+            }
+            return "";
+        }
+
+        function readValue(input) {
+            return input && input.value ? input.value.trim().toUpperCase() : "";
+        }
+
+        function createCell(text) {
+            const td = document.createElement("td");
+            td.textContent = text || "";
+            return td;
+        }
+
+        function renderRows(clientes) {
+            clearRows();
+            clientes.forEach(function (cliente) {
+                const tr = document.createElement("tr");
+                tr.appendChild(createCell(cliente.idCte));
+                tr.appendChild(createCell(cliente.nombre));
+                tr.appendChild(createCell(cliente.apePat));
+                tr.appendChild(createCell(cliente.apeMat));
+                tr.appendChild(createCell(cliente.fecNac));
+                tr.appendChild(createCell(cliente.curp));
+                tr.appendChild(createCell(cliente.estado));
+                tr.appendChild(createCell(cliente.genero));
+                tr.appendChild(createCell(cliente.tipoId));
+                tr.appendChild(createCell(cliente.idIdentificacion));
+                tr.appendChild(createCell(cliente.domicilio));
+                tr.appendChild(createCell(cliente.telefono));
+                tr.appendChild(createCell(cliente.correo));
+                tr.appendChild(createCell(cliente.codigoPostal));
+                tr.appendChild(createCell(cliente.paisNacionalidad));
+                tr.appendChild(createCell(cliente.rfc));
+                tr.appendChild(createCell(cliente.municipio));
+                tr.appendChild(createCell(cliente.fechaAlta));
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function payload() {
+            const curp = readValue(curpInput);
+            const nombre = readValue(nombreInput);
+            const apat = readValue(apatInput);
+            const amat = readValue(amatInput);
+            const idCte = readValue(idCteInput);
+            const accion = idCte ? "C" : "N";
+            return {
+                ACCION: accion,
+                CURP: curp,
+                NOMBRE: nombre,
+                APAT: apat,
+                AMAT: amat,
+                GENERO: readGenero(),
+                INDPAGINACION: accion === "N" ? "" : "N",
+                IDCTE: idCte
+            };
+        }
+
+        async function buscarCoincidencias() {
+            const currentPayload = payload();
+            const sinCampos = !currentPayload.CURP
+                && !currentPayload.NOMBRE
+                && !currentPayload.APAT
+                && !currentPayload.AMAT
+                && !currentPayload.IDCTE;
+            if (sinCampos) {
+                setInfo("Captura al menos CURP o nombre/apellidos para buscar.", true);
+                return;
+            }
+
+            searchBtn.disabled = true;
+            setInfo("Buscando coincidencias...", false);
+
+            try {
+                const response = await fetch("/onboarding/buscar-cliente", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify(currentPayload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    setInfo(errorData.message || "No fue posible consultar coincidencias.", true);
+                    return;
+                }
+
+                const data = await response.json();
+                const estatus = Number(data.estatus);
+                if (estatus === 1) {
+                    setInfo(
+                        data.mensaje && String(data.mensaje).trim() !== ""
+                            ? data.mensaje
+                            : "Sin coincidencias. Puedes continuar capturando el formulario.",
+                        false
+                    );
+                    return;
+                }
+                const clientes = Array.isArray(data.clientes) ? data.clientes : [];
+                if (!clientes.length) {
+                    setInfo("Sin coincidencias. Puedes continuar capturando el formulario.", false);
+                    return;
+                }
+
+                renderRows(clientes);
+                if (modalSummary) {
+                    modalSummary.textContent = "Se encontraron " + clientes.length + " coincidencia(s).";
+                }
+                setInfo("Coincidencias encontradas.", false);
+                const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                modal.show();
+            } catch (error) {
+                setInfo("No fue posible consultar coincidencias.", true);
+            } finally {
+                searchBtn.disabled = false;
+            }
+        }
+
+        searchBtn.addEventListener("click", function () {
+            buscarCoincidencias().catch(function () {
+                setInfo("No fue posible consultar coincidencias.", true);
+                searchBtn.disabled = false;
             });
         });
     })();
