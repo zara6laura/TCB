@@ -1,8 +1,8 @@
 package mx.gob.babien.tcb.repository;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import java.util.Map;
+import mx.gob.babien.tcb.dto.request.ClienteBusquedaRequestDto;
+import mx.gob.babien.tcb.dto.response.Root;
 
 public interface ClienteBusquedaRepository {
-    JsonNode buscarCliente(Map<String, String> payload);
+    Root buscarCliente(ClienteBusquedaRequestDto request);
 }

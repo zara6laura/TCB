@@ -1,8 +1,8 @@
 package mx.gob.babien.tcb.repository;
 
-import java.util.Map;
-import mx.gob.babien.tcb.dto.AltaClienteResponseDto;
+import mx.gob.babien.tcb.dto.request.AltaClienteRequestDto;
+import mx.gob.babien.tcb.dto.response.AltaClienteResponseDto;
 
 public interface AltaClienteRepository {
-    AltaClienteResponseDto altaCliente(Map<String, String> payload);
+    AltaClienteResponseDto altaCliente(AltaClienteRequestDto request);
 }

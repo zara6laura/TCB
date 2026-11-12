@@ -1,19 +1,20 @@
 package mx.gob.babien.tcb.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import mx.gob.babien.tcb.dto.ClienteBusquedaRequestDto;
-import mx.gob.babien.tcb.dto.ClienteBusquedaResponseDto;
-import mx.gob.babien.tcb.dto.ClienteEncontradoDto;
+import mx.gob.babien.tcb.dto.request.ClienteBusquedaRequestDto;
+import mx.gob.babien.tcb.dto.response.ClienteBusquedaResponseDto;
+import mx.gob.babien.tcb.dto.response.ClienteEncontradoDto;
+import mx.gob.babien.tcb.dto.response.Root;
 import mx.gob.babien.tcb.repository.ClienteBusquedaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ClienteBusquedaServiceImpl implements ClienteBusquedaService {
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final String ACCION_SIN_ID_CTE = "N";
     private static final String ACCION_CON_ID_CTE = "C";
     private static final String DEFAULT_PAGINACION = "N";
@@ -28,46 +29,33 @@ public class ClienteBusquedaServiceImpl implements ClienteBusquedaService {
     @Override
     public ClienteBusquedaResponseDto buscarCliente(ClienteBusquedaRequestDto request) {
         ClienteBusquedaRequestDto normalizedRequest = normalize(request);
-        JsonNode serviceResponse = clienteBusquedaRepository.buscarCliente(toServicePayload(normalizedRequest));
+        Root root = clienteBusquedaRepository.buscarCliente(normalizedRequest);
+        JsonNode serviceResponse = root == null ? null : OBJECT_MAPPER.valueToTree(root);
         return toResponse(serviceResponse);
     }
 
     private ClienteBusquedaRequestDto normalize(ClienteBusquedaRequestDto source) {
         ClienteBusquedaRequestDto request = source == null ? new ClienteBusquedaRequestDto() : source;
         ClienteBusquedaRequestDto normalized = new ClienteBusquedaRequestDto();
-        String curp = normalize(request.getCurp());
-        String nombre = normalize(request.getNombre());
-        String apat = normalize(request.getApat());
-        String amat = normalize(request.getAmat());
-        String idCte = firstNonBlank(normalize(request.getIdCte()), DEFAULT_EMPTY);
+        String curp = normalizeOrEmpty(request.getCurp());
+        String nombre = normalizeOrEmpty(request.getNombre());
+        String apat = normalizeOrEmpty(request.getApat());
+        String amat = normalizeOrEmpty(request.getAmat());
+        String idCte = normalizeOrEmpty(request.getIdCte());
         boolean hasIdCte = hasText(idCte);
         normalized.setAccion(hasIdCte ? ACCION_CON_ID_CTE : ACCION_SIN_ID_CTE);
         normalized.setCurp(curp);
         normalized.setNombre(nombre);
         normalized.setApat(apat);
         normalized.setAmat(amat);
-        normalized.setGenero(normalize(request.getGenero()));
-        normalized.setIndPaginacion(
-                firstNonBlank(
-                        normalize(request.getIndPaginacion()),
-                        hasIdCte ? DEFAULT_PAGINACION : DEFAULT_EMPTY
-                )
-        );
+        normalized.setGenero(normalizeOrEmpty(request.getGenero()));
+        String indPaginacion = normalize(request.getIndPaginacion());
+        if (indPaginacion == null) {
+            indPaginacion = hasIdCte ? DEFAULT_PAGINACION : DEFAULT_EMPTY;
+        }
+        normalized.setIndPaginacion(indPaginacion);
         normalized.setIdCte(idCte);
         return normalized;
-    }
-
-    private Map<String, String> toServicePayload(ClienteBusquedaRequestDto request) {
-        Map<String, String> payload = new LinkedHashMap<>();
-        payload.put("ACCION", emptyIfNull(request.getAccion()));
-        payload.put("CURP", emptyIfNull(request.getCurp()));
-        payload.put("NOMBRE", emptyIfNull(request.getNombre()));
-        payload.put("APAT", emptyIfNull(request.getApat()));
-        payload.put("AMAT", emptyIfNull(request.getAmat()));
-        payload.put("GENERO", emptyIfNull(request.getGenero()));
-        payload.put("INDPAGINACION", emptyIfNull(request.getIndPaginacion()));
-        payload.put("IDCTE", emptyIfNull(request.getIdCte()));
-        return payload;
     }
 
     private ClienteBusquedaResponseDto toResponse(JsonNode serviceResponse) {
@@ -262,17 +250,9 @@ public class ClienteBusquedaServiceImpl implements ClienteBusquedaService {
         return normalized.toUpperCase(Locale.ROOT);
     }
 
-    private static String emptyIfNull(String value) {
-        return value == null ? "" : value;
-    }
-
-    private static String firstNonBlank(String... values) {
-        for (String value : values) {
-            if (value != null && !value.isBlank()) {
-                return value;
-            }
-        }
-        return null;
+    private static String normalizeOrEmpty(String value) {
+        String normalized = normalize(value);
+        return normalized == null ? DEFAULT_EMPTY : normalized;
     }
 
     private static boolean hasText(String value) {

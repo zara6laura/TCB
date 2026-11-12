@@ -14,13 +14,16 @@ import mx.gob.babien.tcb.exception.BadRequestException;
 import mx.gob.babien.tcb.exception.ServiceIntegrationException;
 import mx.gob.babien.tcb.model.CurpData;
 import mx.gob.babien.tcb.service.AltaClienteService;
+import mx.gob.babien.tcb.service.CatalogoGeneralService;
 import mx.gob.babien.tcb.service.ClienteBusquedaService;
 import mx.gob.babien.tcb.util.CurpUtils;
-import mx.gob.babien.tcb.dto.AltaClienteRequestDto;
-import mx.gob.babien.tcb.dto.AltaClienteResponseDto;
-import mx.gob.babien.tcb.dto.ClienteBusquedaRequestDto;
-import mx.gob.babien.tcb.dto.ClienteBusquedaResponseDto;
-import mx.gob.babien.tcb.dto.CurpDatosResponseDto;
+import mx.gob.babien.tcb.dto.request.AltaClienteRequestDto;
+import mx.gob.babien.tcb.dto.response.AltaClienteResponseDto;
+import mx.gob.babien.tcb.dto.request.CatalogoGeneralRequestDto;
+import mx.gob.babien.tcb.dto.response.CatalogoGeneralResponseDto;
+import mx.gob.babien.tcb.dto.request.ClienteBusquedaRequestDto;
+import mx.gob.babien.tcb.dto.response.ClienteBusquedaResponseDto;
+import mx.gob.babien.tcb.dto.response.CurpDatosResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -63,15 +66,18 @@ public class OnboardingController {
     private final CurpUtils curpUtils;
     private final AltaClienteService altaClienteService;
     private final ClienteBusquedaService clienteBusquedaService;
+    private final CatalogoGeneralService catalogoGeneralService;
 
     public OnboardingController(
             CurpUtils curpUtils,
             AltaClienteService altaClienteService,
-            ClienteBusquedaService clienteBusquedaService
+            ClienteBusquedaService clienteBusquedaService,
+            CatalogoGeneralService catalogoGeneralService
     ) {
         this.curpUtils = curpUtils;
         this.altaClienteService = altaClienteService;
         this.clienteBusquedaService = clienteBusquedaService;
+        this.catalogoGeneralService = catalogoGeneralService;
     }
 
     @GetMapping("/")
@@ -130,6 +136,15 @@ public class OnboardingController {
     )
     public ResponseEntity<ClienteBusquedaResponseDto> buscarCliente(@RequestBody ClienteBusquedaRequestDto request) {
         return ResponseEntity.ok(clienteBusquedaService.buscarCliente(request));
+    }
+
+    @ResponseBody
+    @PostMapping(
+            value = ONBOARDING_BASE_PATH + "/catalogos/general",
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CatalogoGeneralResponseDto> consumirCatalogoGeneral(@RequestBody CatalogoGeneralRequestDto request) {
+        return ResponseEntity.ok(catalogoGeneralService.consumirCatalogo(request));
     }
 
     @PostMapping(ONBOARDING_BASE_PATH + "/altacliente")

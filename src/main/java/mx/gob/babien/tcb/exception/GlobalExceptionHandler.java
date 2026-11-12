@@ -1,6 +1,6 @@
 package mx.gob.babien.tcb.exception;
 
-import mx.gob.babien.tcb.dto.ApiErrorResponseDto;
+import mx.gob.babien.tcb.dto.response.ApiErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

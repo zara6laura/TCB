@@ -1,14 +1,14 @@
 package mx.gob.babien.tcb.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
-import mx.gob.babien.tcb.dto.ClienteBusquedaRequestDto;
-import mx.gob.babien.tcb.dto.ClienteBusquedaResponseDto;
+import mx.gob.babien.tcb.dto.request.ClienteBusquedaRequestDto;
+import mx.gob.babien.tcb.dto.response.ClienteBusquedaResponseDto;
+import mx.gob.babien.tcb.dto.response.Root;
 import mx.gob.babien.tcb.repository.ClienteBusquedaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(MockitoExtension.class)
 class ClienteBusquedaServiceImplTest {
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Mock
     private ClienteBusquedaRepository clienteBusquedaRepository;
@@ -28,7 +29,7 @@ class ClienteBusquedaServiceImplTest {
     @BeforeEach
     void setUp() {
         service = new ClienteBusquedaServiceImpl(clienteBusquedaRepository);
-        when(clienteBusquedaRepository.buscarCliente(anyMap())).thenReturn(new ObjectMapper().createObjectNode());
+        when(clienteBusquedaRepository.buscarCliente(any())).thenReturn(new Root());
     }
 
     @Test
@@ -41,11 +42,11 @@ class ClienteBusquedaServiceImplTest {
 
         service.buscarCliente(request);
 
-        ArgumentCaptor<Map<String, String>> payloadCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(clienteBusquedaRepository).buscarCliente(payloadCaptor.capture());
-        Map<String, String> payload = payloadCaptor.getValue();
-        assertThat(payload.get("ACCION")).isEqualTo("N");
-        assertThat(payload.get("INDPAGINACION")).isEmpty();
+        ArgumentCaptor<ClienteBusquedaRequestDto> requestCaptor = ArgumentCaptor.forClass(ClienteBusquedaRequestDto.class);
+        verify(clienteBusquedaRepository).buscarCliente(requestCaptor.capture());
+        ClienteBusquedaRequestDto outboundRequest = requestCaptor.getValue();
+        assertThat(outboundRequest.getAccion()).isEqualTo("N");
+        assertThat(outboundRequest.getIndPaginacion()).isEmpty();
     }
 
     @Test
@@ -58,11 +59,11 @@ class ClienteBusquedaServiceImplTest {
 
         service.buscarCliente(request);
 
-        ArgumentCaptor<Map<String, String>> payloadCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(clienteBusquedaRepository).buscarCliente(payloadCaptor.capture());
-        Map<String, String> payload = payloadCaptor.getValue();
-        assertThat(payload.get("ACCION")).isEqualTo("C");
-        assertThat(payload.get("INDPAGINACION")).isEqualTo("N");
+        ArgumentCaptor<ClienteBusquedaRequestDto> requestCaptor = ArgumentCaptor.forClass(ClienteBusquedaRequestDto.class);
+        verify(clienteBusquedaRepository).buscarCliente(requestCaptor.capture());
+        ClienteBusquedaRequestDto outboundRequest = requestCaptor.getValue();
+        assertThat(outboundRequest.getAccion()).isEqualTo("C");
+        assertThat(outboundRequest.getIndPaginacion()).isEqualTo("N");
     }
 
     @Test
@@ -92,8 +93,9 @@ class ClienteBusquedaServiceImplTest {
                 }
                 """;
 
-        when(clienteBusquedaRepository.buscarCliente(anyMap()))
-                .thenReturn(new ObjectMapper().readTree(rawResponse));
+        Root root = OBJECT_MAPPER.readValue(rawResponse, Root.class);
+        when(clienteBusquedaRepository.buscarCliente(any()))
+                .thenReturn(root);
 
         ClienteBusquedaResponseDto response = service.buscarCliente(new ClienteBusquedaRequestDto());
 

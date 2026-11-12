@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: tcb
+
+  config:
+    import: >
+      file:./urlServices.yml
+      

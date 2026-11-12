@@ -17,10 +17,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import mx.gob.babien.tcb.dto.AltaClienteResponseDto;
-import mx.gob.babien.tcb.dto.ClienteBusquedaResponseDto;
-import mx.gob.babien.tcb.dto.ClienteEncontradoDto;
+import mx.gob.babien.tcb.dto.response.AltaClienteResponseDto;
+import mx.gob.babien.tcb.dto.response.CatalogoGeneralResponseDto;
+import mx.gob.babien.tcb.dto.response.CatalogoRegistroDto;
+import mx.gob.babien.tcb.dto.response.ClienteBusquedaResponseDto;
+import mx.gob.babien.tcb.dto.response.ClienteEncontradoDto;
 import mx.gob.babien.tcb.service.AltaClienteService;
+import mx.gob.babien.tcb.service.CatalogoGeneralService;
 import mx.gob.babien.tcb.service.ClienteBusquedaService;
 import mx.gob.babien.tcb.util.CurpUtils;
 import java.util.List;
@@ -40,6 +43,9 @@ class OnboardingControllerTest {
 
     @MockBean
     private ClienteBusquedaService clienteBusquedaService;
+
+    @MockBean
+    private CatalogoGeneralService catalogoGeneralService;
 
     @Test
     void shouldRedirectRootToFirstOnboardingStep() throws Exception {
@@ -160,5 +166,32 @@ class OnboardingControllerTest {
                 .andExpect(jsonPath("$.codigo").value("OK"))
                 .andExpect(jsonPath("$.clientes[0].idCte").value("4232566"))
                 .andExpect(jsonPath("$.clientes[0].curp").value("PASG800809HDFZNB05"));
+    }
+
+    @Test
+    void shouldReturnGeneralCatalogResponse() throws Exception {
+        CatalogoRegistroDto registro = new CatalogoRegistroDto();
+        registro.setCodTblRef("00022");
+        registro.setClaveFila("01");
+        registro.setDescrCorta("COMERCIO");
+        CatalogoGeneralResponseDto response = new CatalogoGeneralResponseDto();
+        response.setEstatus(0);
+        response.setRegistros(List.of(registro));
+        given(catalogoGeneralService.consumirCatalogo(any())).willReturn(response);
+
+        mockMvc.perform(post("/onboarding/catalogos/general")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "COD_TBL_REF":"00022",
+                                  "COD_APLCCN_SUBAPL":"POT",
+                                  "numeropagina":"1"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.estatus").value(0))
+                .andExpect(jsonPath("$.registros[0].COD_TBL_REF").value("00022"))
+                .andExpect(jsonPath("$.registros[0].CLAVE_FILA").value("01"))
+                .andExpect(jsonPath("$.registros[0].DESCR_CORTA").value("COMERCIO"));
     }
 }

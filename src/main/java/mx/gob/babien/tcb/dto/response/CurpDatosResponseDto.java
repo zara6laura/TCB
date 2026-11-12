@@ -1,4 +1,4 @@
-package mx.gob.babien.tcb.dto;
+package mx.gob.babien.tcb.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

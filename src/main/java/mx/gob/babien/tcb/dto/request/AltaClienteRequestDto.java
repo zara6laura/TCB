@@ -1,4 +1,4 @@
-package mx.gob.babien.tcb.dto;
+package mx.gob.babien.tcb.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;

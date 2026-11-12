@@ -1,0 +1,4 @@
+urlServicios:
+  AltaCliente:
+    urlCatalogos: http://172.16.17.7:8290/ApiCatalogoTcbFtFila/ObtenerCatalogoTcbFtFila
+

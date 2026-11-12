@@ -1,13 +1,15 @@
 package mx.gob.babien.tcb.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-import mx.gob.babien.tcb.dto.AltaClienteRequestDto;
+import mx.gob.babien.tcb.dto.request.AltaClienteRequestDto;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AltaClientePayloadMapper {
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public AltaClienteRequestDto normalize(AltaClienteRequestDto source) {
         AltaClienteRequestDto request = source == null ? new AltaClienteRequestDto() : source;
@@ -146,6 +148,10 @@ public class AltaClientePayloadMapper {
         payload.put("OPEREA-TRANSFERENCIAS", emptyIfNull(request.getOperaTransferencias()));
         payload.put("DOM-REG-OCUPACION", emptyIfNull(request.getDomRegOcupacion()));
         return payload;
+    }
+
+    public AltaClienteRequestDto toServiceRequest(AltaClienteRequestDto request) {
+        return OBJECT_MAPPER.convertValue(toServicePayload(request), AltaClienteRequestDto.class);
     }
 
     private static String normalize(String value, boolean uppercase) {

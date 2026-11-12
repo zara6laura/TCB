@@ -1,7 +1,7 @@
 package mx.gob.babien.tcb.service;
 
-import mx.gob.babien.tcb.dto.AltaClienteRequestDto;
-import mx.gob.babien.tcb.dto.AltaClienteResponseDto;
+import mx.gob.babien.tcb.dto.request.AltaClienteRequestDto;
+import mx.gob.babien.tcb.dto.response.AltaClienteResponseDto;
 import mx.gob.babien.tcb.exception.BadRequestException;
 import mx.gob.babien.tcb.repository.AltaClienteRepository;
 import mx.gob.babien.tcb.util.AltaClientePayloadMapper;
@@ -24,7 +24,7 @@ public class AltaClienteServiceImpl implements AltaClienteService {
     public AltaClienteResponseDto altaCliente(AltaClienteRequestDto request) {
         AltaClienteRequestDto normalizedRequest = altaClientePayloadMapper.normalize(request);
         validate(normalizedRequest);
-        return altaClienteRepository.altaCliente(altaClientePayloadMapper.toServicePayload(normalizedRequest));
+        return altaClienteRepository.altaCliente(altaClientePayloadMapper.toServiceRequest(normalizedRequest));
     }
 
     private void validate(AltaClienteRequestDto request) {
