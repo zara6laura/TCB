@@ -141,5 +141,9 @@ public class AltaClienteRequestDto {
     private String usoctaDeptoNomin;
     @JsonProperty("DOM-REG-OCUPACION")
     private String domRegOcupacion;
+    @JsonProperty("COD-EDO-CIVIL")
+    private String codEdoCivil;
+    @JsonProperty("COD-REG-MATRIMONIO")
+    private String codRegMatrimonio;
 
 }

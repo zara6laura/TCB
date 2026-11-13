@@ -67,41 +67,71 @@ class ClienteBusquedaServiceImplTest {
     }
 
     @Test
-    void shouldReadNestedBuctenomResponseClients() throws Exception {
+    void shouldReadClientesFromRespuestaRegistrosWhenEstatusIsZero() throws Exception {
         String rawResponse = """
                 {
-                  "EjecutarResponse": {
-                    "EjecutarResult": {
-                      "ESTATUS": 0,
-                      "CODIGO": "SNTEA101",
-                      "MENSAJE": "CONSULTA EXITOSA",
-                      "NUMTASK": "0419170023387",
-                      "ResponseBansefi": {
-                        "ResponseBansefi": {
+                  "respuesta": {
+                    "estatus": 0,
+                    "error": {
+                      "codigoError": "SNTEA101",
+                      "descError": "CONSULTA EXITOSA, NO HAY MAS DATOS"
+                    },
+                    "datos": {
+                      "registros": [
+                        {
                           "CLIENTE": "0023782302",
                           "NOMBRE": "SARA LAURA",
                           "APEPAT": "GONZALEZ",
                           "APEMAT": "BADILLO",
-                          "FECNAC": "2001-07-06",
-                          "CURP": "GOBS010706MZSNDRA9",
-                          "EDO": "DISTRITO FEDERAL",
-                          "GENERO": "M"
+                          "CURP": "GOBS010706MZSNDRA9"
                         }
-                      }
+                      ]
                     }
                   }
                 }
                 """;
-
         Root root = OBJECT_MAPPER.readValue(rawResponse, Root.class);
-        when(clienteBusquedaRepository.buscarCliente(any()))
-                .thenReturn(root);
+        when(clienteBusquedaRepository.buscarCliente(any())).thenReturn(root);
 
         ClienteBusquedaResponseDto response = service.buscarCliente(new ClienteBusquedaRequestDto());
 
+        assertThat(response.getEstatus()).isEqualTo(0);
         assertThat(response.getCodigo()).isEqualTo("SNTEA101");
+        assertThat(response.getMensaje()).isEqualTo("CONSULTA EXITOSA, NO HAY MAS DATOS");
         assertThat(response.getClientes()).hasSize(1);
         assertThat(response.getClientes().get(0).getIdCte()).isEqualTo("0023782302");
-        assertThat(response.getClientes().get(0).getCurp()).isEqualTo("GOBS010706MZSNDRA9");
+    }
+
+    @Test
+    void shouldReturnErrorMessageAndEmptyClientesWhenEstatusIsOne() throws Exception {
+        String rawResponse = """
+                {
+                  "respuesta": {
+                    "estatus": 1,
+                    "error": {
+                      "codigoError": "ARQE0092",
+                      "descError": "NO EXISTEN DATOS DE LA PERSONA"
+                    },
+                    "datos": {
+                      "registros": [
+                        {
+                          "CLIENTE": "0000000000",
+                          "NOMBRE": "                              "
+                        }
+                      ]
+                    }
+                  }
+                }
+                """;
+        Root root = OBJECT_MAPPER.readValue(rawResponse, Root.class);
+        when(clienteBusquedaRepository.buscarCliente(any())).thenReturn(root);
+
+        ClienteBusquedaResponseDto response = service.buscarCliente(new ClienteBusquedaRequestDto());
+
+        assertThat(response.getEstatus()).isEqualTo(1);
+        assertThat(response.getCodigo()).isEqualTo("ARQE0092");
+        assertThat(response.getMensaje()).isEqualTo("NO EXISTEN DATOS DE LA PERSONA");
+        assertThat(response.getClientes()).isEmpty();
     }
 }
+

@@ -16,5 +16,4 @@ public class ClienteBusquedaResponseDto {
     private String numTask;
     private String accionAplicada;
     private List<ClienteEncontradoDto> clientes = new ArrayList<>();
-
 }

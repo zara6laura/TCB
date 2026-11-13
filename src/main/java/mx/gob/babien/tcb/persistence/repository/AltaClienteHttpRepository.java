@@ -1,11 +1,17 @@
-package mx.gob.babien.tcb.repository;
+package mx.gob.babien.tcb.persistence.repository;
 
-import mx.gob.babien.tcb.dto.request.ClienteBusquedaRequestDto;
+import java.util.List;
+import mx.gob.babien.tcb.dto.request.AltaClienteRequestDto;
+import mx.gob.babien.tcb.dto.response.AltaClienteResponseDto;
+import mx.gob.babien.tcb.dto.response.DatosDto;
+import mx.gob.babien.tcb.dto.response.RegistroDto;
 import mx.gob.babien.tcb.dto.response.Root;
 import mx.gob.babien.tcb.exception.ServiceIntegrationException;
+import mx.gob.babien.tcb.repository.AltaClienteRepository;
 import mx.gob.babien.tcb.util.ServiceErrorParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
@@ -15,25 +21,28 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 @Repository
-public class ClienteBusquedaHttpRepository implements ClienteBusquedaRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClienteBusquedaHttpRepository.class);
-    private static final String BUCTENOM_PATH = "/Clientes/BUCTENOM";
+public class AltaClienteHttpRepository implements AltaClienteRepository {
     private static final String NETWORK_ERROR_PREFIX = "Error de conectividad: ";
+    private static final Logger LOGGER = LoggerFactory.getLogger(AltaClienteHttpRepository.class);
     private final RestClient restClient;
+    private final String urlAltaCliente;
 
-    public ClienteBusquedaHttpRepository(RestClient restClient) {
+    public AltaClienteHttpRepository(
+            RestClient restClient,
+            @Value("${urlServicios.AltaCliente.urlAltaCliente}") String urlAltaCliente
+    ) {
         this.restClient = restClient;
+        this.urlAltaCliente = urlAltaCliente;
     }
 
     @Override
-    public Root buscarCliente(ClienteBusquedaRequestDto request) {
-        LOGGER.info("Solicitud enviada a BUCTENOM: {}", request);
-        Root root = postForRoot(request, BUCTENOM_PATH);
-        LOGGER.info("Respuesta recibida de BUCTENOM");
-        return root;
+    public AltaClienteResponseDto altaCliente(AltaClienteRequestDto request) {
+        LOGGER.info("Solicitud enviada a altaCliente: {}", request);
+        Root root = postForRoot(request, urlAltaCliente);
+        return resolveAltaClienteResponse(root);
     }
 
-    private Root postForRoot(Object request, String url) {
+    private Root postForRoot(AltaClienteRequestDto request, String url) {
         try {
             Root root = restClient.post()
                     .uri(url)
@@ -72,5 +81,35 @@ public class ClienteBusquedaHttpRepository implements ClienteBusquedaRepository 
             LOGGER.error("Error inesperado al consumir [{}]: {}", url, exception.getMessage(), exception);
             throw new ServiceIntegrationException("Error inesperado al procesar la solicitud.", exception);
         }
+    }
+
+    private static AltaClienteResponseDto resolveAltaClienteResponse(Root root) {
+        if (root == null || root.getRespuesta() == null || root.getRespuesta().getDatos() == null) {
+            throw new ServiceIntegrationException("La respuesta del servicio no contiene perfil e idInterna.");
+        }
+        DatosDto datos = root.getRespuesta().getDatos();
+        List<RegistroDto> registros = datos.getRegistros();
+        if (registros == null || registros.isEmpty()) {
+            throw new ServiceIntegrationException("La respuesta del servicio no contiene perfil e idInterna.");
+        }
+        for (RegistroDto registro : registros) {
+            if (registro == null) {
+                continue;
+            }
+            String perfil = normalize(registro.getPerfil());
+            String idInterna = normalize(registro.getIdInterna());
+            if (perfil != null && idInterna != null) {
+                return new AltaClienteResponseDto(perfil, idInterna);
+            }
+        }
+        throw new ServiceIntegrationException("La respuesta del servicio no contiene perfil e idInterna.");
+    }
+
+    private static String normalize(String value) {
+        if (value == null) {
+            return null;
+        }
+        String normalized = value.trim();
+        return normalized.isBlank() ? null : normalized;
     }
 }

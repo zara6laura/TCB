@@ -1,10 +1,9 @@
-package mx.gob.babien.tcb.repository;
+package mx.gob.babien.tcb.persistence.repository;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import mx.gob.babien.tcb.dto.response.CatalogoGeneralRawResponseDto;
-import mx.gob.babien.tcb.dto.request.CatalogoGeneralRequestDto;
+import mx.gob.babien.tcb.dto.request.ClienteBusquedaRequestDto;
+import mx.gob.babien.tcb.dto.response.Root;
 import mx.gob.babien.tcb.exception.ServiceIntegrationException;
+import mx.gob.babien.tcb.repository.ClienteBusquedaRepository;
 import mx.gob.babien.tcb.util.ServiceErrorParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,54 +17,47 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 @Repository
-public class CatalogoGeneralHttpRepository implements CatalogoGeneralRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogoGeneralHttpRepository.class);
+public class ClienteBusquedaHttpRepository implements ClienteBusquedaRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClienteBusquedaHttpRepository.class);
     private static final String NETWORK_ERROR_PREFIX = "Error de conectividad: ";
     private final RestClient restClient;
-    private final String urlCatalogos;
+    private final String urlBuscarCliente;
 
-    public CatalogoGeneralHttpRepository(
+    public ClienteBusquedaHttpRepository(
             RestClient restClient,
-            @Value("${urlServicios.AltaCliente.urlCatalogos:http://172.16.17.7:8290/ApiCatalogoTcbFtFila/ObtenerCatalogoTcbFtFila}")
-            String urlCatalogos
+            @Value("${urlServicios.AltaCliente.urlBuscarCliente}") String urlBuscarCliente
     ) {
         this.restClient = restClient;
-        this.urlCatalogos = urlCatalogos;
+        this.urlBuscarCliente = urlBuscarCliente;
     }
 
     @Override
-    public CatalogoGeneralRawResponseDto consumirCatalogo(CatalogoGeneralRequestDto request) {
-        Map<String, String> payload = new LinkedHashMap<>();
-        payload.put("COD_TBL_REF", emptyIfNull(request.getCodTblRef()));
-        payload.put("COD_APLCCN_SUBAPL", emptyIfNull(request.getCodAplccnSubapl()));
-        payload.put("numeropagina", emptyIfNull(request.getNumeroPagina()));
-        return postForRoot(payload, urlCatalogos);
+    public Root buscarCliente(ClienteBusquedaRequestDto request) {
+        LOGGER.info("Solicitud enviada a BUCTENOM: {}", request);
+        Root root = postForRoot(request, urlBuscarCliente);
+        LOGGER.info("Respuesta recibida de BUCTENOM");
+        return root;
     }
 
-    private CatalogoGeneralRawResponseDto postForRoot(Object request, String url) {
+    private Root postForRoot(ClienteBusquedaRequestDto request, String url) {
         try {
-            CatalogoGeneralRawResponseDto response = restClient.post()
+            Root root = restClient.post()
                     .uri(url)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(request)
                     .retrieve()
-                    .body(CatalogoGeneralRawResponseDto.class);
+                    .body(Root.class);
 
-            if (response == null || response.getRespuesta() == null) {
+            if (root == null || root.getRespuesta() == null) {
                 LOGGER.error("Respuesta nula o sin estructura en [{}]", url);
                 throw new ServiceIntegrationException("Respuesta inválida del servicio externo.");
             }
-            return response;
+            return root;
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             String body = exception.getResponseBodyAsString();
-            LOGGER.warn(
-                    "Error HTTP {} en [{}]. Body: {}",
-                    exception.getStatusCode().value(),
-                    url,
-                    body
-            );
+            LOGGER.warn("Error HTTP {} en [{}]. Body: {}", exception.getStatusCode().value(), url, body);
 
-            CatalogoGeneralRawResponseDto parsed = ServiceErrorParser.tryParseCatalogRoot(body);
+            Root parsed = ServiceErrorParser.tryParseRoot(body);
             if (parsed != null) {
                 return parsed;
             }
@@ -86,9 +78,5 @@ public class CatalogoGeneralHttpRepository implements CatalogoGeneralRepository 
             LOGGER.error("Error inesperado al consumir [{}]: {}", url, exception.getMessage(), exception);
             throw new ServiceIntegrationException("Error inesperado al procesar la solicitud.", exception);
         }
-    }
-
-    private static String emptyIfNull(String value) {
-        return value == null ? "" : value;
     }
 }

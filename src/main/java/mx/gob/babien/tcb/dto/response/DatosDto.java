@@ -1,5 +1,6 @@
 package mx.gob.babien.tcb.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DatosDto {
-    private List<ClienteEncontradoDto> clientes;
+    @JsonProperty("registros")
+    private List<RegistroDto> registros = new ArrayList<>();
 }
-

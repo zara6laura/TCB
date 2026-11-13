@@ -14,6 +14,4 @@ public class CatalogoGeneralResponseDto {
     private String codigoError;
     private String descError;
     private List<CatalogoRegistroDto> registros = new ArrayList<>();
-
 }
-

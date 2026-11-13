@@ -6,10 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import mx.gob.babien.tcb.catalog.CountryCatalog;
-import mx.gob.babien.tcb.catalog.EconomicActivityCnaeCatalog;
 import mx.gob.babien.tcb.catalog.FiscalRegimeCatalog;
-import mx.gob.babien.tcb.catalog.OccupationCnoCatalog;
-import mx.gob.babien.tcb.catalog.StreetTypeCatalog;
 import mx.gob.babien.tcb.exception.BadRequestException;
 import mx.gob.babien.tcb.exception.ServiceIntegrationException;
 import mx.gob.babien.tcb.model.CurpData;
@@ -18,10 +15,10 @@ import mx.gob.babien.tcb.service.CatalogoGeneralService;
 import mx.gob.babien.tcb.service.ClienteBusquedaService;
 import mx.gob.babien.tcb.util.CurpUtils;
 import mx.gob.babien.tcb.dto.request.AltaClienteRequestDto;
-import mx.gob.babien.tcb.dto.response.AltaClienteResponseDto;
 import mx.gob.babien.tcb.dto.request.CatalogoGeneralRequestDto;
-import mx.gob.babien.tcb.dto.response.CatalogoGeneralResponseDto;
 import mx.gob.babien.tcb.dto.request.ClienteBusquedaRequestDto;
+import mx.gob.babien.tcb.dto.response.AltaClienteResponseDto;
+import mx.gob.babien.tcb.dto.response.CatalogoGeneralResponseDto;
 import mx.gob.babien.tcb.dto.response.ClienteBusquedaResponseDto;
 import mx.gob.babien.tcb.dto.response.CurpDatosResponseDto;
 import org.slf4j.Logger;
@@ -110,13 +107,12 @@ public class OnboardingController {
     @GetMapping(ONBOARDING_BASE_PATH + "/curp-datos")
     public ResponseEntity<CurpDatosResponseDto> curpDatos(@RequestParam(name = "curp") String curp) {
         CurpData curpData = curpUtils.extractCurpData(curp);
-        CurpDatosResponseDto response = new CurpDatosResponseDto(
-                curpData.curp(),
-                curpData.genero(),
-                curpData.fechaNacimiento(),
-                curpData.entidadFederativa(),
-                curpData.pais()
-        );
+        CurpDatosResponseDto response = new CurpDatosResponseDto();
+        response.setCurp(curpData.curp());
+        response.setGenero(curpData.genero());
+        response.setFechaNacimiento(curpData.fechaNacimiento());
+        response.setEntidadFederativa(curpData.entidadFederativa());
+        response.setPais(curpData.pais());
         return ResponseEntity.ok(response);
     }
 
@@ -180,7 +176,7 @@ public class OnboardingController {
         if (bindingResult.hasErrors()) {
             String message = bindingResult.getFieldErrors().stream()
                     .findFirst()
-                    .map(error -> error.getDefaultMessage() == null ? "Solicitud inválida." : error.getDefaultMessage())
+                    .map(error -> defaultMessage(error.getDefaultMessage()))
                     .orElse("Solicitud inválida.");
             LOGGER.warn("Solicitud inválida desde onboarding: {}", message);
             redirectAttributes.addFlashAttribute("altaClienteError", message);
@@ -212,9 +208,6 @@ public class OnboardingController {
         model.addAttribute("stepLabels", STEP_LABELS);
         model.addAttribute("catalogoPaises", CountryCatalog.countries());
         model.addAttribute("catalogoRegimenFiscal", FiscalRegimeCatalog.fiscalRegimes());
-        model.addAttribute("catalogoOcupacionesCno", OccupationCnoCatalog.occupations());
-        model.addAttribute("catalogoActividadesCnae", EconomicActivityCnaeCatalog.activities());
-        model.addAttribute("catalogoTiposCalle", StreetTypeCatalog.streetTypes());
         model.addAttribute("hasPrevious", step > FIRST_STEP);
         model.addAttribute("hasNext", step < TOTAL_STEPS);
         model.addAttribute("previousStep", Math.max(step - 1, FIRST_STEP));
@@ -222,21 +215,17 @@ public class OnboardingController {
     }
 
     private void addCurpModelAttributes(String curp, Model model) {
-        CurpData curpData = new CurpData("", "", "", "", "");
-
-        if (curp != null && !curp.trim().isEmpty()) {
-            try {
-                curpData = curpUtils.extractCurpData(curp);
-            } catch (BadRequestException exception) {
-                model.addAttribute("curpError", exception.getMessage());
-            }
+        if (curp == null || curp.trim().isEmpty()) {
+            setCurpDataModel(model, new CurpData("", "", "", "", ""));
+            return;
         }
 
-        model.addAttribute("curp", curpData.curp());
-        model.addAttribute("generoCurp", curpData.genero());
-        model.addAttribute("fechaNacimientoCurp", curpData.fechaNacimiento());
-        model.addAttribute("entidadFederativaCurp", curpData.entidadFederativa());
-        model.addAttribute("paisCurp", curpData.pais());
+        try {
+            setCurpDataModel(model, curpUtils.extractCurpData(curp));
+        } catch (BadRequestException exception) {
+            model.addAttribute("curpError", exception.getMessage());
+            setCurpDataModel(model, new CurpData("", "", "", "", ""));
+        }
     }
 
     private boolean isStepOutOfRange(int step) {
@@ -324,16 +313,26 @@ public class OnboardingController {
     }
 
     private boolean hasDocumentCheckboxSelection(HttpServletRequest request) {
-        return request.getParameter("docComprobanteIngresos") != null
-                || request.getParameter("docActaConstitutiva") != null
-                || request.getParameter("docActaDefuncion") != null
-                || request.getParameter("docActaNacimiento") != null;
+        String[] documentFields = {
+                "docComprobanteIngresos",
+                "docActaConstitutiva",
+                "docActaDefuncion",
+                "docActaNacimiento"
+        };
+        for (String documentField : documentFields) {
+            if (request.getParameter(documentField) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void normalizeSelectFieldsToBlank(AltaClienteRequestDto request) {
         request.setCodPaisNal(valueOrBlank(request.getCodPaisNal()));
         request.setCodPaisRes(valueOrBlank(request.getCodPaisRes()));
         request.setRegFisc(valueOrBlank(request.getRegFisc()));
+        request.setCodEdoCivil(valueOrBlank(request.getCodEdoCivil()));
+        request.setCodRegMatrimonio(valueOrBlank(request.getCodRegMatrimonio()));
         request.setCodCno(valueOrBlank(request.getCodCno()));
         request.setCodCnae(valueOrBlank(request.getCodCnae()));
         request.setDomTipoCalle(valueOrBlank(request.getDomTipoCalle()));
@@ -341,6 +340,18 @@ public class OnboardingController {
 
     private String valueOrBlank(String value) {
         return value == null || value.isBlank() ? BLANK_VALUE : value;
+    }
+
+    private void setCurpDataModel(Model model, CurpData curpData) {
+        model.addAttribute("curp", curpData.curp());
+        model.addAttribute("generoCurp", curpData.genero());
+        model.addAttribute("fechaNacimientoCurp", curpData.fechaNacimiento());
+        model.addAttribute("entidadFederativaCurp", curpData.entidadFederativa());
+        model.addAttribute("paisCurp", curpData.pais());
+    }
+
+    private static String defaultMessage(String message) {
+        return message == null ? "Solicitud inválida." : message;
     }
 
     private boolean isChecked(HttpServletRequest request, String fieldName) {

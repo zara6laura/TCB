@@ -1,21 +1,15 @@
 package mx.gob.babien.tcb.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Map;
 import mx.gob.babien.tcb.dto.request.AltaClienteRequestDto;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AltaClientePayloadMapper {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+public class AltaClienteDtoMapper {
 
     public AltaClienteRequestDto normalize(AltaClienteRequestDto source) {
         AltaClienteRequestDto request = source == null ? new AltaClienteRequestDto() : source;
         AltaClienteRequestDto normalized = new AltaClienteRequestDto();
-        //normalized.setTarifCtaPasivo(normalize(request.getTarifCtaPasivo(), true));
-        //normalized.setIdUsuario(normalize(request.getIdUsuario(), true));
         normalized.setTpoId(normalize(request.getTpoId(), true));
         normalized.setNumId(normalize(request.getNumId(), true));
         normalized.setNumSuc(normalize(request.getNumSuc(), true));
@@ -24,6 +18,8 @@ public class AltaClientePayloadMapper {
         normalized.setPrimApe(normalize(request.getPrimApe(), true));
         normalized.setSeguApe(normalize(request.getSeguApe(), true));
         normalized.setRegFisc(normalize(request.getRegFisc(), true));
+        normalized.setCodEdoCivil(normalize(request.getCodEdoCivil(), true));
+        normalized.setCodRegMatrimonio(normalize(request.getCodRegMatrimonio(), true));
         normalized.setRfc(normalize(request.getRfc(), true));
         normalized.setCurp(normalize(request.getCurp(), true));
         normalized.setCodPaisNal(normalize(request.getCodPaisNal(), true));
@@ -81,93 +77,90 @@ public class AltaClientePayloadMapper {
         return normalized;
     }
 
-    public Map<String, String> toServicePayload(AltaClienteRequestDto request) {
-        Map<String, String> payload = new LinkedHashMap<>();
-       // payload.put("TARIF-CTA-PASIVO", emptyIfNull(request.getTarifCtaPasivo()));
-       // payload.put("ID USUARIO", emptyIfNull(request.getIdUsuario()));
-        payload.put("TPO-ID", emptyIfNull(request.getTpoId()));
-        payload.put("NUM-ID", emptyIfNull(request.getNumId()));
-        payload.put("NUM-SUC", emptyIfNull(request.getNumSuc()));
-        payload.put("GENERO", emptyIfNull(request.getGenero()));
-        payload.put("NOMBRE", emptyIfNull(request.getNombre()));
-        payload.put("PRIM-APE", emptyIfNull(request.getPrimApe()));
-        payload.put("SEGU-APE", emptyIfNull(request.getSeguApe()));
-        payload.put("REG-FISC", emptyIfNull(request.getRegFisc()));
-        payload.put("RFC", emptyIfNull(request.getRfc()));
-        payload.put("CURP", emptyIfNull(request.getCurp()));
-        payload.put("COD-PAIS-NAL", emptyIfNull(request.getCodPaisNal()));
-        payload.put("COD-PAIS-RES", emptyIfNull(request.getCodPaisRes()));
-        payload.put("COD-CNO", emptyIfNull(request.getCodCno()));
-        payload.put("COD-CNAE", emptyIfNull(request.getCodCnae()));
-        payload.put("FEC-NACTO", emptyIfNull(request.getFecNacto()));
-        payload.put("COD-POSTAL-LUG-NACTO", emptyIfNull(request.getCodPostalLugNacto()));
-        payload.put("COD-EDO-NAC", emptyIfNull(request.getCodEdoNac()));
-        payload.put("COD-PAIS-NACTO", emptyIfNull(request.getCodPaisNacto()));
-        payload.put("TRANS-NUM-DEPO", emptyIfNull(request.getTransNumDepo()));
-        payload.put("TRANS-IMPT-DEPO", emptyIfNull(request.getTransImptDepo()));
-        payload.put("TRANS-NUM-RETI", emptyIfNull(request.getTransNumReti()));
-        payload.put("TRANS-IMPT-RETI", emptyIfNull(request.getTransImptReti()));
-        payload.put("FTEINGR-HONORARIOS", emptyIfNull(request.getFteingrHonorarios()));
-        payload.put("FTEINGR-SUELDOS", emptyIfNull(request.getFteingrSueldos()));
-        payload.put("FTEINGR-ARRENDAMTO", emptyIfNull(request.getFteingrArrendamto()));
-        payload.put("FTEINGR-ACTV-COMERCIAL", emptyIfNull(request.getFteingrActvComercial()));
-        payload.put("FTEINGR-OTROS", emptyIfNull(request.getFteingrOtros()));
-        payload.put("FTEINGR-DESCRIBA-OTROS", emptyIfNull(request.getFteingrDescribaOtros()));
-        payload.put("FTEINGR-MTO-MEN-INGRESOS", emptyIfNull(request.getFteingrMtoMenIngresos()));
-        payload.put("USOCTA-ADM-INGRE-Y-GASTS", emptyIfNull(request.getUsoctaAdmIngreYGasts()));
-        payload.put("USOCTA-PAGO-SERVS", emptyIfNull(request.getUsoctaPagoServs()));
-        payload.put("USOCTA-DEPTO-NOMIN", emptyIfNull(request.getUsoctaDeptoNomin()));
-        payload.put("USOCTA-OTROS", emptyIfNull(request.getUsoctaOtros()));
-        payload.put("USOCTA-DESCRIBA-OTROS", emptyIfNull(request.getUsoctaDescribaOtros()));
-        payload.put("OPEREA-PORC-PROPIOS", emptyIfNull(request.getOpereaPorcPropios()));
-        payload.put("OPEREA-PORC-TERCEROS", emptyIfNull(request.getOpereaPorcTerceros()));
-        payload.put("PERSONA-POLI-EXPUESTA", emptyIfNull(request.getPersonaPoliExpuesta()));
-        payload.put("PERSONA-POLI-EXPUESTA-DESC", emptyIfNull(request.getPersonaPoliExpuestaDesc()));
-        payload.put("REL-PERSONA-POLI-EXPUEST", emptyIfNull(request.getRelPersonaPoliExpuest()));
-        payload.put("REL-PERSONA-POLI-EXPUEST-DESC", emptyIfNull(request.getRelPersonaPoliExpuestDesc()));
-        payload.put("REL-PERSONA-POLI-EXPUEST-NOM", emptyIfNull(request.getRelPersonaPoliExpuestNom()));
-        payload.put("DOM-NUM-TELEF-DOM", emptyIfNull(request.getDomNumTelefDom()));
-        payload.put("DOM-TIPO-CALLE", emptyIfNull(request.getDomTipoCalle()));
-        payload.put("DOM-NOMB-CALLE", emptyIfNull(request.getDomNombCalle()));
-        payload.put("DOM-NUM-EXT", emptyIfNull(request.getDomNumExt()));
-        payload.put("DOM-NUM-INT", emptyIfNull(request.getDomNumInt()));
-        payload.put("DOM-NOMB-COLONIA", emptyIfNull(request.getDomNombColonia()));
-        payload.put("DOM-COD-POSTAL", emptyIfNull(request.getDomCodPostal()));
-        payload.put("NOMB-CORREO", emptyIfNull(request.getNombCorreo()));
-        payload.put("COD-DOC1", emptyIfNull(request.getCodDoc1()));
-        payload.put("DESC-COD1", emptyIfNull(request.getDescCod1()));
-        payload.put("COD-DOC2", emptyIfNull(request.getCodDoc2()));
-        payload.put("DESC-COD2", emptyIfNull(request.getDescCod2()));
-        payload.put("COD-DOC3", emptyIfNull(request.getCodDoc3()));
-        payload.put("DESC-COD3", emptyIfNull(request.getDescCod3()));
-        payload.put("COD-DOC4", emptyIfNull(request.getCodDoc4()));
-        payload.put("DESC-COD4", emptyIfNull(request.getDescCod4()));
-        payload.put("OPEREA-DEPOSITOS", emptyIfNull(request.getOperaDepositos()));
-        payload.put("OPEREA-RETIROS", emptyIfNull(request.getOperaRetiros()));
-        payload.put("OPEREA-COBRO-GIROS", emptyIfNull(request.getOperaCobroGiros()));
-        payload.put("OPEREA-TRANSFERENCIAS", emptyIfNull(request.getOperaTransferencias()));
-        payload.put("DOM-REG-OCUPACION", emptyIfNull(request.getDomRegOcupacion()));
-        return payload;
-    }
-
     public AltaClienteRequestDto toServiceRequest(AltaClienteRequestDto request) {
-        return OBJECT_MAPPER.convertValue(toServicePayload(request), AltaClienteRequestDto.class);
+        AltaClienteRequestDto normalized = request == null ? new AltaClienteRequestDto() : request;
+        AltaClienteRequestDto serviceRequest = new AltaClienteRequestDto();
+        serviceRequest.setTpoId(emptyIfNull(normalized.getTpoId()));
+        serviceRequest.setNumId(emptyIfNull(normalized.getNumId()));
+        serviceRequest.setNumSuc(emptyIfNull(normalized.getNumSuc()));
+        serviceRequest.setGenero(emptyIfNull(normalized.getGenero()));
+        serviceRequest.setNombre(emptyIfNull(normalized.getNombre()));
+        serviceRequest.setPrimApe(emptyIfNull(normalized.getPrimApe()));
+        serviceRequest.setSeguApe(emptyIfNull(normalized.getSeguApe()));
+        serviceRequest.setRegFisc(emptyIfNull(normalized.getRegFisc()));
+        serviceRequest.setCodEdoCivil(emptyIfNull(normalized.getCodEdoCivil()));
+        serviceRequest.setCodRegMatrimonio(emptyIfNull(normalized.getCodRegMatrimonio()));
+        serviceRequest.setRfc(emptyIfNull(normalized.getRfc()));
+        serviceRequest.setCurp(emptyIfNull(normalized.getCurp()));
+        serviceRequest.setCodPaisNal(emptyIfNull(normalized.getCodPaisNal()));
+        serviceRequest.setCodPaisRes(emptyIfNull(normalized.getCodPaisRes()));
+        serviceRequest.setCodCno(emptyIfNull(normalized.getCodCno()));
+        serviceRequest.setCodCnae(emptyIfNull(normalized.getCodCnae()));
+        serviceRequest.setFecNacto(emptyIfNull(normalized.getFecNacto()));
+        serviceRequest.setCodPostalLugNacto(emptyIfNull(normalized.getCodPostalLugNacto()));
+        serviceRequest.setCodEdoNac(emptyIfNull(normalized.getCodEdoNac()));
+        serviceRequest.setCodPaisNacto(emptyIfNull(normalized.getCodPaisNacto()));
+        serviceRequest.setTransNumDepo(emptyIfNull(normalized.getTransNumDepo()));
+        serviceRequest.setTransImptDepo(emptyIfNull(normalized.getTransImptDepo()));
+        serviceRequest.setTransNumReti(emptyIfNull(normalized.getTransNumReti()));
+        serviceRequest.setTransImptReti(emptyIfNull(normalized.getTransImptReti()));
+        serviceRequest.setFteingrHonorarios(emptyIfNull(normalized.getFteingrHonorarios()));
+        serviceRequest.setFteingrSueldos(emptyIfNull(normalized.getFteingrSueldos()));
+        serviceRequest.setFteingrArrendamto(emptyIfNull(normalized.getFteingrArrendamto()));
+        serviceRequest.setFteingrActvComercial(emptyIfNull(normalized.getFteingrActvComercial()));
+        serviceRequest.setFteingrOtros(emptyIfNull(normalized.getFteingrOtros()));
+        serviceRequest.setFteingrDescribaOtros(emptyIfNull(normalized.getFteingrDescribaOtros()));
+        serviceRequest.setFteingrMtoMenIngresos(emptyIfNull(normalized.getFteingrMtoMenIngresos()));
+        serviceRequest.setUsoctaAdmIngreYGasts(emptyIfNull(normalized.getUsoctaAdmIngreYGasts()));
+        serviceRequest.setUsoctaPagoServs(emptyIfNull(normalized.getUsoctaPagoServs()));
+        serviceRequest.setUsoctaDeptoNomin(emptyIfNull(normalized.getUsoctaDeptoNomin()));
+        serviceRequest.setUsoctaOtros(emptyIfNull(normalized.getUsoctaOtros()));
+        serviceRequest.setUsoctaDescribaOtros(emptyIfNull(normalized.getUsoctaDescribaOtros()));
+        serviceRequest.setOpereaPorcPropios(emptyIfNull(normalized.getOpereaPorcPropios()));
+        serviceRequest.setOpereaPorcTerceros(emptyIfNull(normalized.getOpereaPorcTerceros()));
+        serviceRequest.setPersonaPoliExpuesta(emptyIfNull(normalized.getPersonaPoliExpuesta()));
+        serviceRequest.setPersonaPoliExpuestaDesc(emptyIfNull(normalized.getPersonaPoliExpuestaDesc()));
+        serviceRequest.setRelPersonaPoliExpuest(emptyIfNull(normalized.getRelPersonaPoliExpuest()));
+        serviceRequest.setRelPersonaPoliExpuestDesc(emptyIfNull(normalized.getRelPersonaPoliExpuestDesc()));
+        serviceRequest.setRelPersonaPoliExpuestNom(emptyIfNull(normalized.getRelPersonaPoliExpuestNom()));
+        serviceRequest.setDomNumTelefDom(emptyIfNull(normalized.getDomNumTelefDom()));
+        serviceRequest.setDomTipoCalle(emptyIfNull(normalized.getDomTipoCalle()));
+        serviceRequest.setDomNombCalle(emptyIfNull(normalized.getDomNombCalle()));
+        serviceRequest.setDomNumExt(emptyIfNull(normalized.getDomNumExt()));
+        serviceRequest.setDomNumInt(emptyIfNull(normalized.getDomNumInt()));
+        serviceRequest.setDomNombColonia(emptyIfNull(normalized.getDomNombColonia()));
+        serviceRequest.setDomCodPostal(emptyIfNull(normalized.getDomCodPostal()));
+        serviceRequest.setNombCorreo(emptyIfNull(normalized.getNombCorreo()));
+        serviceRequest.setCodDoc1(emptyIfNull(normalized.getCodDoc1()));
+        serviceRequest.setDescCod1(emptyIfNull(normalized.getDescCod1()));
+        serviceRequest.setCodDoc2(emptyIfNull(normalized.getCodDoc2()));
+        serviceRequest.setDescCod2(emptyIfNull(normalized.getDescCod2()));
+        serviceRequest.setCodDoc3(emptyIfNull(normalized.getCodDoc3()));
+        serviceRequest.setDescCod3(emptyIfNull(normalized.getDescCod3()));
+        serviceRequest.setCodDoc4(emptyIfNull(normalized.getCodDoc4()));
+        serviceRequest.setDescCod4(emptyIfNull(normalized.getDescCod4()));
+        serviceRequest.setOperaDepositos(emptyIfNull(normalized.getOperaDepositos()));
+        serviceRequest.setOperaRetiros(emptyIfNull(normalized.getOperaRetiros()));
+        serviceRequest.setOperaCobroGiros(emptyIfNull(normalized.getOperaCobroGiros()));
+        serviceRequest.setOperaTransferencias(emptyIfNull(normalized.getOperaTransferencias()));
+        serviceRequest.setDomRegOcupacion(emptyIfNull(normalized.getDomRegOcupacion()));
+        return serviceRequest;
     }
 
     private static String normalize(String value, boolean uppercase) {
         if (value == null) {
-            return null;
+            return "";
         }
         String normalized = value.trim();
         if (normalized.isEmpty()) {
-            return null;
+            return "";
         }
         return uppercase ? normalized.toUpperCase(Locale.ROOT) : normalized;
     }
 
     private static String normalizeDocumentValue(String value, boolean uppercase) {
         String normalized = normalize(value, uppercase);
-        return normalized == null ? " " : normalized;
+        return normalized.isEmpty() ? " " : normalized;
     }
 
     private static String normalizeSOrBlank(String value) {

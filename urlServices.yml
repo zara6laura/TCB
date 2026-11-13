@@ -1,4 +1,5 @@
 urlServicios:
   AltaCliente:
+    urlAltaCliente: http://localhost:8290/tcb/altacliente
+    urlBuscarCliente: http://localhost:8290/Clientes/BUCTENOM
     urlCatalogos: http://172.16.17.7:8290/ApiCatalogoTcbFtFila/ObtenerCatalogoTcbFtFila
-

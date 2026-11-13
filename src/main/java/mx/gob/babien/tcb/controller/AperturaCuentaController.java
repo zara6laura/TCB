@@ -38,13 +38,10 @@ public class AperturaCuentaController {
     }
 
     private String resolveAllowedAccountType(String rawType) {
-        if (rawType == null) {
+        if (rawType == null || rawType.isBlank()) {
             return DEFAULT_ACCOUNT_TYPE;
         }
         String normalizedType = rawType.trim();
-        if (normalizedType.isEmpty()) {
-            return DEFAULT_ACCOUNT_TYPE;
-        }
         return ALLOWED_ACCOUNT_TYPES.contains(normalizedType) ? normalizedType : DEFAULT_ACCOUNT_TYPE;
     }
 }

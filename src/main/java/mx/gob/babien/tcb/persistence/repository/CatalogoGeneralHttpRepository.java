@@ -1,12 +1,13 @@
-package mx.gob.babien.tcb.repository;
+package mx.gob.babien.tcb.persistence.repository;
 
-import mx.gob.babien.tcb.dto.request.AltaClienteRequestDto;
-import mx.gob.babien.tcb.dto.response.AltaClienteResponseDto;
+import mx.gob.babien.tcb.dto.request.CatalogoGeneralRequestDto;
 import mx.gob.babien.tcb.dto.response.Root;
 import mx.gob.babien.tcb.exception.ServiceIntegrationException;
+import mx.gob.babien.tcb.repository.CatalogoGeneralRepository;
 import mx.gob.babien.tcb.util.ServiceErrorParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
@@ -16,56 +17,52 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 @Repository
-public class AltaClienteHttpRepository implements AltaClienteRepository {
-    private static final String ALTA_CLIENTE_PATH = "/tcb/altacliente";
+public class CatalogoGeneralHttpRepository implements CatalogoGeneralRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogoGeneralHttpRepository.class);
     private static final String NETWORK_ERROR_PREFIX = "Error de conectividad: ";
-    private static final Logger LOGGER = LoggerFactory.getLogger(AltaClienteHttpRepository.class);
     private final RestClient restClient;
+    private final String urlCatalogos;
 
-    public AltaClienteHttpRepository(RestClient restClient) {
+    public CatalogoGeneralHttpRepository(
+            RestClient restClient,
+            @Value("${urlServicios.AltaCliente.urlCatalogos}")
+            String urlCatalogos
+    ) {
         this.restClient = restClient;
+        this.urlCatalogos = urlCatalogos;
     }
 
     @Override
-    public AltaClienteResponseDto altaCliente(AltaClienteRequestDto request) {
-        LOGGER.info("Solicitud enviada a altaCliente: {}", request);
-        Root root = postForRoot(request, ALTA_CLIENTE_PATH);
-        String perfil = firstNonBlank(
-                read(root, "perfil"),
-                read(root, "PERFIL"),
-                read(root, "profile")
-        );
-        String idInterna = firstNonBlank(
-                read(root, "idInterna"),
-                read(root, "ID_INTERNA"),
-                read(root, "ID.INTERNA"),
-                read(root, "id.interna")
-        );
-
-        if (perfil == null || idInterna == null) {
-            throw new ServiceIntegrationException("La respuesta del servicio no contiene perfil e idInterna.");
-        }
-
-        return new AltaClienteResponseDto(perfil, idInterna);
+    public Root consumirCatalogo(CatalogoGeneralRequestDto request) {
+        CatalogoGeneralRequestDto requestDto = new CatalogoGeneralRequestDto();
+        requestDto.setCodTblRef(emptyIfNull(request.getCodTblRef()));
+        requestDto.setCodAplccnSubapl(emptyIfNull(request.getCodAplccnSubapl()));
+        requestDto.setNumeroPagina(emptyIfNull(request.getNumeroPagina()));
+        return postForRoot(requestDto, urlCatalogos);
     }
 
-    private Root postForRoot(Object request, String url) {
+    private Root postForRoot(CatalogoGeneralRequestDto requestDto, String url) {
         try {
-            Root root = restClient.post()
+            Root response = restClient.post()
                     .uri(url)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(request)
+                    .body(requestDto)
                     .retrieve()
                     .body(Root.class);
 
-            if (root == null || root.getRespuesta() == null) {
+            if (response == null || response.getRespuesta() == null) {
                 LOGGER.error("Respuesta nula o sin estructura en [{}]", url);
                 throw new ServiceIntegrationException("Respuesta inválida del servicio externo.");
             }
-            return root;
+            return response;
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             String body = exception.getResponseBodyAsString();
-            LOGGER.warn("Error HTTP {} en [{}]. Body: {}", exception.getStatusCode().value(), url, body);
+            LOGGER.warn(
+                    "Error HTTP {} en [{}]. Body: {}",
+                    exception.getStatusCode().value(),
+                    url,
+                    body
+            );
 
             Root parsed = ServiceErrorParser.tryParseRoot(body);
             if (parsed != null) {
@@ -90,24 +87,7 @@ public class AltaClienteHttpRepository implements AltaClienteRepository {
         }
     }
 
-    private static String read(Root root, String field) {
-        if (root == null) {
-            return null;
-        }
-        Object value = root.get(field);
-        if (value == null) {
-            return null;
-        }
-        String text = String.valueOf(value);
-        return text == null || text.isBlank() ? null : text.trim();
-    }
-
-    private static String firstNonBlank(String... values) {
-        for (String value : values) {
-            if (value != null && !value.isBlank()) {
-                return value;
-            }
-        }
-        return null;
+    private static String emptyIfNull(String value) {
+        return value == null ? "" : value;
     }
 }

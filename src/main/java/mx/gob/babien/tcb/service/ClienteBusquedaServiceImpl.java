@@ -1,20 +1,25 @@
 package mx.gob.babien.tcb.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import mx.gob.babien.tcb.dto.request.ClienteBusquedaRequestDto;
 import mx.gob.babien.tcb.dto.response.ClienteBusquedaResponseDto;
 import mx.gob.babien.tcb.dto.response.ClienteEncontradoDto;
+import mx.gob.babien.tcb.dto.response.DatosDto;
+import mx.gob.babien.tcb.dto.response.ErrorDto;
+import mx.gob.babien.tcb.dto.response.RegistroDto;
+import mx.gob.babien.tcb.dto.response.RespuestaDto;
 import mx.gob.babien.tcb.dto.response.Root;
 import mx.gob.babien.tcb.repository.ClienteBusquedaRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ClienteBusquedaServiceImpl implements ClienteBusquedaService {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClienteBusquedaServiceImpl.class);
     private static final String ACCION_SIN_ID_CTE = "N";
     private static final String ACCION_CON_ID_CTE = "C";
     private static final String DEFAULT_PAGINACION = "N";
@@ -30,8 +35,9 @@ public class ClienteBusquedaServiceImpl implements ClienteBusquedaService {
     public ClienteBusquedaResponseDto buscarCliente(ClienteBusquedaRequestDto request) {
         ClienteBusquedaRequestDto normalizedRequest = normalize(request);
         Root root = clienteBusquedaRepository.buscarCliente(normalizedRequest);
-        JsonNode serviceResponse = root == null ? null : OBJECT_MAPPER.valueToTree(root);
-        return toResponse(serviceResponse);
+        ClienteBusquedaResponseDto response = toResponse(root);
+        LOGGER.info("Respuesta buscarCliente: {}", response);
+        return response;
     }
 
     private ClienteBusquedaRequestDto normalize(ClienteBusquedaRequestDto source) {
@@ -58,185 +64,70 @@ public class ClienteBusquedaServiceImpl implements ClienteBusquedaService {
         return normalized;
     }
 
-    private ClienteBusquedaResponseDto toResponse(JsonNode serviceResponse) {
-        JsonNode resultNode = firstObjectPath(
-                serviceResponse,
-                "EjecutarResponse", "EjecutarResult"
-        );
-        JsonNode metadataNode = resultNode == null ? serviceResponse : resultNode;
+    private ClienteBusquedaResponseDto toResponse(Root root) {
         ClienteBusquedaResponseDto response = new ClienteBusquedaResponseDto();
-        response.setEstatus(readInt(metadataNode, 0, "estatus", "ESTATUS"));
-        response.setCodigo(readText(metadataNode, "codigo", "CODIGO"));
-        response.setMensaje(readText(metadataNode, "mensaje", "MENSAJE"));
-        response.setNumTask(readText(metadataNode, "numTask", "NUMTASK", "NUM_TASK"));
-        response.setAccionAplicada(readText(metadataNode, "accionAplicada", "ACCIONAPLICADA", "ACCION_APLICADA"));
-        response.setClientes(readClientes(serviceResponse));
+        if (root == null || root.getRespuesta() == null) {
+            response.setClientes(emptyClientes());
+            return response;
+        }
+
+        RespuestaDto respuesta = root.getRespuesta();
+        ErrorDto error = respuesta.getError();
+        DatosDto datos = respuesta.getDatos();
+
+        int estatus = respuesta.getEstatus() == null ? 0 : respuesta.getEstatus();
+        response.setEstatus(estatus);
+        response.setCodigo(error == null ? null : normalize(error.getCodigoError()));
+        response.setMensaje(error == null ? null : normalize(error.getDescError()));
+        response.setNumTask(null);
+        response.setAccionAplicada(null);
+
+        if (estatus != 0 || datos == null) {
+            response.setClientes(emptyClientes());
+            return response;
+        }
+
+        response.setClientes(fromRegistros(datos.getRegistros()));
         return response;
     }
 
-    private List<ClienteEncontradoDto> readClientes(JsonNode serviceResponse) {
-        List<ClienteEncontradoDto> clientes = new ArrayList<>();
-        if (serviceResponse == null || serviceResponse.isNull()) {
-            return clientes;
+    private List<ClienteEncontradoDto> fromRegistros(List<RegistroDto> registros) {
+        if (registros == null || registros.isEmpty()) {
+            return emptyClientes();
         }
-
-        JsonNode rowsNode = resolveRowsNode(serviceResponse);
-        if (rowsNode == null || rowsNode.isNull()) {
-            return clientes;
-        }
-
-        if (rowsNode.isArray()) {
-            for (JsonNode row : rowsNode) {
-                addClienteIfPresent(clientes, row);
-            }
-            return clientes;
-        }
-
-        if (rowsNode.isObject()) {
-            addClienteIfPresent(clientes, rowsNode);
-        }
-        return clientes;
+        return registros.stream()
+                .map(this::toClienteNormalizado)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
-    private JsonNode resolveRowsNode(JsonNode serviceResponse) {
-        if (serviceResponse == null || serviceResponse.isNull()) {
+    private ClienteEncontradoDto toClienteNormalizado(RegistroDto registro) {
+        if (registro == null) {
             return null;
-        }
-        if (serviceResponse.isArray()) {
-            return serviceResponse;
-        }
-
-        JsonNode directRows = firstArray(serviceResponse, "clientes", "CLIENTES", "resultado", "RESULTADO", "data", "DATA");
-        if (directRows != null) {
-            return directRows;
-        }
-
-        JsonNode resultNode = firstObjectPath(serviceResponse, "EjecutarResponse", "EjecutarResult");
-        if (resultNode == null || resultNode.isNull()) {
-            return null;
-        }
-
-        JsonNode resultRows = firstArray(resultNode, "clientes", "CLIENTES", "resultado", "RESULTADO", "data", "DATA");
-        if (resultRows != null) {
-            return resultRows;
-        }
-
-        JsonNode responseBansefi = firstNode(resultNode, "ResponseBansefi", "responseBansefi", "RESPONSEBANSEFI");
-        if (responseBansefi == null || responseBansefi.isNull()) {
-            return null;
-        }
-
-        if (responseBansefi.isArray()) {
-            return responseBansefi;
-        }
-
-        if (responseBansefi.isObject()) {
-            JsonNode nestedResponseBansefi = firstNode(
-                    responseBansefi,
-                    "ResponseBansefi", "responseBansefi", "RESPONSEBANSEFI"
-            );
-            if (nestedResponseBansefi != null && !nestedResponseBansefi.isNull()) {
-                return nestedResponseBansefi;
-            }
-            return responseBansefi;
-        }
-
-        return null;
-    }
-
-    private void addClienteIfPresent(List<ClienteEncontradoDto> clientes, JsonNode row) {
-        if (row == null || row.isNull()) {
-            return;
         }
         ClienteEncontradoDto cliente = new ClienteEncontradoDto();
-        cliente.setIdCte(readText(row, "idCte", "IDCTE", "ID_CTE", "idInterna", "ID_INTERNA", "ID.INTERNA", "CLIENTE"));
-        cliente.setNombre(readText(row, "nombre", "NOMBRE"));
-        cliente.setApePat(readText(row, "apePat", "APEPAT", "APAT", "PRIM-APE", "PRIM_APE"));
-        cliente.setApeMat(readText(row, "apeMat", "APEMAT", "AMAT", "SEGU-APE", "SEGU_APE"));
-        cliente.setFecNac(readText(row, "fecNac", "FECNAC", "FEC-NACTO", "FEC_NACTO"));
-        cliente.setCurp(readText(row, "curp", "CURP"));
-        cliente.setEstado(readText(row, "estado", "ESTADO", "EDO"));
-        cliente.setGenero(readText(row, "genero", "GENERO"));
-        cliente.setTipoId(readText(row, "tipoId", "TIPOID", "TPO-ID", "TPO_ID"));
-        cliente.setIdIdentificacion(readText(row, "idIdentificacion", "IDIDENTIFICACION", "NUM-ID", "NUM_ID", "IDEXTPE"));
-        cliente.setDomicilio(readText(row, "domicilio", "DOMICILIO", "DOMIC50"));
-        cliente.setTelefono(readText(row, "telefono", "TELEFONO", "TEL", "NUMTELDOM"));
-        cliente.setCorreo(readText(row, "correo", "CORREO"));
-        cliente.setCodigoPostal(readText(row, "codigoPostal", "CODIGOPOSTAL", "CP", "COD-POSTAL", "CODPOST"));
-        cliente.setPaisNacionalidad(readText(row, "paisNacionalidad", "PAISNACIONALIDAD", "COD-PAIS-NAL", "PAISNACTO"));
-        cliente.setRfc(readText(row, "rfc", "RFC"));
-        cliente.setMunicipio(readText(row, "municipio", "MUNICIPIO"));
-        cliente.setFechaAlta(readText(row, "fechaAlta", "FECHAALTA", "FECALTA"));
+        cliente.setIdCte(normalize(registro.getIdCte()));
+        cliente.setNombre(normalize(registro.getNombre()));
+        cliente.setApePat(normalize(registro.getApePat()));
+        cliente.setApeMat(normalize(registro.getApeMat()));
+        cliente.setFecNac(normalize(registro.getFecNac()));
+        cliente.setCurp(normalize(registro.getCurp()));
+        cliente.setEstado(normalize(registro.getEstado()));
+        cliente.setGenero(normalize(registro.getGenero()));
+        cliente.setTipoId(normalize(registro.getTipoId()));
+        cliente.setIdIdentificacion(normalize(registro.getIdIdentificacion()));
+        cliente.setDomicilio(normalize(registro.getDomicilio()));
+        cliente.setTelefono(normalize(registro.getTelefono()));
+        cliente.setCorreo(normalize(registro.getCorreo()));
+        cliente.setCodigoPostal(normalize(registro.getCodigoPostal()));
+        cliente.setPaisNacionalidad(normalize(registro.getPaisNacionalidad()));
+        cliente.setRfc(normalize(registro.getRfc()));
+        cliente.setMunicipio(normalize(registro.getMunicipio()));
+        cliente.setFechaAlta(normalize(registro.getFechaAlta()));
         if (!hasText(cliente.getIdCte()) && !hasText(cliente.getCurp()) && !hasText(cliente.getNombre())) {
-            return;
-        }
-        clientes.add(cliente);
-    }
-
-    private JsonNode firstArray(JsonNode node, String... fieldNames) {
-        if (node == null || node.isNull()) {
             return null;
         }
-        for (String fieldName : fieldNames) {
-            JsonNode candidate = node.get(fieldName);
-            if (candidate != null && candidate.isArray()) {
-                return candidate;
-            }
-        }
-        return null;
-    }
-
-    private JsonNode firstNode(JsonNode node, String... fieldNames) {
-        if (node == null || node.isNull()) {
-            return null;
-        }
-        for (String fieldName : fieldNames) {
-            JsonNode candidate = node.get(fieldName);
-            if (candidate != null && !candidate.isNull()) {
-                return candidate;
-            }
-        }
-        return null;
-    }
-
-    private JsonNode firstObjectPath(JsonNode root, String... path) {
-        JsonNode current = root;
-        for (String fieldName : path) {
-            if (current == null || current.isNull() || !current.isObject()) {
-                return null;
-            }
-            current = current.get(fieldName);
-        }
-        return current;
-    }
-
-    private String readText(JsonNode node, String... fieldNames) {
-        if (node == null || node.isNull()) {
-            return null;
-        }
-        for (String fieldName : fieldNames) {
-            JsonNode value = node.get(fieldName);
-            if (value == null || value.isNull()) {
-                continue;
-            }
-            String text = value.asText();
-            if (text != null && !text.isBlank()) {
-                return text.trim();
-            }
-        }
-        return null;
-    }
-
-    private int readInt(JsonNode node, int defaultValue, String... fieldNames) {
-        String value = readText(node, fieldNames);
-        if (value == null) {
-            return defaultValue;
-        }
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException exception) {
-            return defaultValue;
-        }
+        return cliente;
     }
 
     private static String normalize(String value) {
@@ -244,10 +135,7 @@ public class ClienteBusquedaServiceImpl implements ClienteBusquedaService {
             return null;
         }
         String normalized = value.trim();
-        if (normalized.isEmpty()) {
-            return null;
-        }
-        return normalized.toUpperCase(Locale.ROOT);
+        return normalized.isEmpty() ? null : normalized.toUpperCase(Locale.ROOT);
     }
 
     private static String normalizeOrEmpty(String value) {
@@ -258,4 +146,9 @@ public class ClienteBusquedaServiceImpl implements ClienteBusquedaService {
     private static boolean hasText(String value) {
         return value != null && !value.isBlank();
     }
+
+    private static List<ClienteEncontradoDto> emptyClientes() {
+        return new ArrayList<>();
+    }
+
 }

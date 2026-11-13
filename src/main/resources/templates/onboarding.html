@@ -428,7 +428,7 @@
                                                 <div class="row g-2">
                                                     <div class="col-8">
                                                         <select id="tpoId" class="form-select" th:field="*{tpoId}">
-                                                            <option th:value="51">INE</option>
+                                                            <option value="">Selecciona tipo de identificación</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -482,6 +482,26 @@
                                         <div class="col-12"><select id="regFisc" class="form-select" th:field="*{regFisc}"><option value="">Selecciona un régimen fiscal</option><option th:each="regimen : ${catalogoRegimenFiscal}" th:value="${regimen.code}" th:text="${regimen.description}"></option></select></div>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <label class="form-label  fw-bold" for="codEdoCivil">Estado civil:</label>
+                                    <div class="row g-2">
+                                        <div class="col-12">
+                                            <select id="codEdoCivil" class="form-select" th:field="*{codEdoCivil}">
+                                                <option value="">Selecciona estado civil</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label  fw-bold" for="codRegMatrimonio">Régimen de matrimonio:</label>
+                                    <div class="row g-2">
+                                        <div class="col-12">
+                                            <select id="codRegMatrimonio" class="form-select" th:field="*{codRegMatrimonio}">
+                                                <option value="">Selecciona régimen de matrimonio</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
                             <br>
@@ -532,7 +552,12 @@
                                                 <div class="col-md-4">
                                                     <label class="form-label  fw-bold" for="domTipoCalle"><span class="text-danger">*</span> Tipo de Calle:</label>
                                                     <div class="row g-2">
-                                                        <div class="col-12"><select id="domTipoCalle" class="form-select" data-address-field="tipoCalle" th:field="*{domTipoCalle}"><option value="">Selecciona tipo de calle</option><option th:each="tipoCalle : ${catalogoTiposCalle}" th:value="${tipoCalle.code}" th:text="${tipoCalle.description}"></option></select></div>
+                                                        <div class="col-12">
+                                                            <select id="domTipoCalle" class="form-select" data-address-field="tipoCalle" th:field="*{domTipoCalle}">
+                                                                <option value="">Selecciona tipo de calle</option>
+                                                            </select>
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4"><label class="form-label  fw-bold" for="domNombCall"><span class="text-danger">*</span> Calle:</label><input type="text" class="form-control" data-address-field="calle" id="domNombCall" th:field="*{domNombCalle}"  maxlength="45" autocomplete="off"></div>
@@ -563,7 +588,11 @@
                                                 <div class="col-md-4">
                                                     <label class="form-label  fw-bold" for="domTipoCalleFiscal"><span class="text-danger">*</span> Tipo de Calle:</label>
                                                     <div class="row g-2">
-                                                        <div class="col-12"><select id="domTipoCalleFiscal" class="form-select" data-address-field="tipoCalle"><option value="">Selecciona tipo de calle</option><option th:each="tipoCalle : ${catalogoTiposCalle}" th:value="${tipoCalle.code}" th:text="${tipoCalle.description}"></option></select></div>
+                                                        <div class="col-12">
+                                                            <select id="domTipoCalleFiscal" class="form-select" data-address-field="tipoCalle">
+                                                                <option value="">Selecciona tipo de calle</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4"><label class="form-label  fw-bold" for="domNombCal"><span class="text-danger">*</span> Calle:</label><input type="text" class="form-control" data-address-field="calle" id="domNombCal"  maxlength="45" autocomplete="off"></div>
@@ -580,7 +609,11 @@
                                 <div class="data-box">
                                     <div class="row g-2 align-items-end">
                                         <div class="col-md-2"><label class="form-label  fw-bold">Ocupación (CNO):</label></div>
-                                        <div class="col-md-10"><select id="codCnoInput" class="form-select" th:field="*{codCno}"><option value="">Selecciona una ocupación</option><option th:each="ocupacion : ${catalogoOcupacionesCno}" th:value="${ocupacion.code}" th:text="${ocupacion.description}"></option></select></div>
+                                        <div class="col-md-10">
+                                            <select id="codCnoInput" class="form-select" th:field="*{codCno}">
+                                                <option value="">Selecciona una ocupación</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -590,7 +623,11 @@
                                     <p class="data-box-title mb-2">Datos Autónomo</p>
                                     <div class="row g-2 align-items-end">
                                         <div class="col-md-2"><label class="form-label  fw-bold">Actividad económica (CNAE):</label></div>
-                                        <div class="col-md-10"><select id="codCnaeInput" class="form-select" th:field="*{codCnae}"><option value="">Selecciona una actividad económica</option><option th:each="actividad : ${catalogoActividadesCnae}" th:value="${actividad.code}" th:text="${actividad.description}"></option></select></div>
+                                        <div class="col-md-10">
+                                            <select id="codCnaeInput" class="form-select" th:field="*{codCnae}">
+                                                <option value="">Selecciona una actividad económica</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1578,6 +1615,69 @@
 </script>
 <script>
     (function () {
+        function cargarCatalogo(selectId, codTblRef, codAplccnSubapl, placeholder, errorLabel) {
+            const select = document.getElementById(selectId);
+            if (!select) {
+                return;
+            }
+
+            const selectedValue = select.value || "";
+            const requestBody = {
+                COD_TBL_REF: codTblRef,
+                COD_APLCCN_SUBAPL: codAplccnSubapl,
+                numeropagina: "1"
+            };
+
+            fetch("/onboarding/catalogos/general", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(requestBody)
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("No fue posible cargar el catálogo " + errorLabel + ".");
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    const registros = Array.isArray(data.registros) ? data.registros : [];
+                    select.innerHTML = '<option value="">' + placeholder + '</option>';
+
+                    registros.forEach(function (registro) {
+                        const id = registro && registro.ID ? String(registro.ID).trim() : "";
+                        const descripcion = registro && registro.DESCR_LARGA ? String(registro.DESCR_LARGA).trim() : "";
+                        if (!id || !descripcion) {
+                            return;
+                        }
+                        const option = document.createElement("option");
+                        option.value = id;
+                        option.textContent = descripcion;
+                        select.appendChild(option);
+                    });
+
+                    if (selectedValue) {
+                        select.value = selectedValue;
+                    }
+                })
+                .catch(function (error) {
+                    console.error("Error cargando catálogo " + errorLabel + ":", error);
+                });
+        }
+
+        cargarCatalogo("codCnoInput", "00022", "POT", "Selecciona una ocupación", "CNO");
+        cargarCatalogo("codCnaeInput", "00015", "POT", "Selecciona una actividad económica", "CNAE");
+        cargarCatalogo("tpoId", "00017", "PGE", "Selecciona tipo de identificación", "tipo de identificación");
+        cargarCatalogo("domTipoCalle", "00008", "POT", "Selecciona tipo de calle", "tipo de calle");
+        cargarCatalogo("domTipoCalleFiscal", "00008", "POT", "Selecciona tipo de calle", "tipo de calle fiscal");
+        cargarCatalogo("codEdoCivil", "00032", "PGE", "Selecciona estado civil", "estado civil");
+        cargarCatalogo("codRegMatrimonio", "00033", "PGE", "Selecciona régimen de matrimonio", "régimen de matrimonio");
+    })();
+</script>
+<script>
+    (function () {
         const curpInput = document.getElementById("curp");
         const fecNacto = document.getElementById("fecNacto");
         const codEdoNac = document.getElementById("codEdoNac");
@@ -1769,7 +1869,7 @@
             });
         }
 
-        function payload() {
+        function buildRequestDto() {
             const curp = readValue(curpInput);
             const nombre = readValue(nombreInput);
             const apat = readValue(apatInput);
@@ -1789,12 +1889,12 @@
         }
 
         async function buscarCoincidencias() {
-            const currentPayload = payload();
-            const sinCampos = !currentPayload.CURP
-                && !currentPayload.NOMBRE
-                && !currentPayload.APAT
-                && !currentPayload.AMAT
-                && !currentPayload.IDCTE;
+            const requestDto = buildRequestDto();
+            const sinCampos = !requestDto.CURP
+                && !requestDto.NOMBRE
+                && !requestDto.APAT
+                && !requestDto.AMAT
+                && !requestDto.IDCTE;
             if (sinCampos) {
                 setInfo("Captura al menos CURP o nombre/apellidos para buscar.", true);
                 return;
@@ -1810,7 +1910,7 @@
                         "Content-Type": "application/json",
                         "Accept": "application/json"
                     },
-                    body: JSON.stringify(currentPayload)
+                    body: JSON.stringify(requestDto)
                 });
 
                 if (!response.ok) {
@@ -1826,7 +1926,7 @@
                         data.mensaje && String(data.mensaje).trim() !== ""
                             ? data.mensaje
                             : "Sin coincidencias. Puedes continuar capturando el formulario.",
-                        false
+                        true
                     );
                     return;
                 }
