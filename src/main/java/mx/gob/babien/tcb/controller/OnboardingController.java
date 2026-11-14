@@ -13,13 +13,16 @@ import mx.gob.babien.tcb.model.CurpData;
 import mx.gob.babien.tcb.service.AltaClienteService;
 import mx.gob.babien.tcb.service.CatalogoGeneralService;
 import mx.gob.babien.tcb.service.ClienteBusquedaService;
+import mx.gob.babien.tcb.service.CodigoPostalService;
 import mx.gob.babien.tcb.util.CurpUtils;
 import mx.gob.babien.tcb.dto.request.AltaClienteRequestDto;
 import mx.gob.babien.tcb.dto.request.CatalogoGeneralRequestDto;
 import mx.gob.babien.tcb.dto.request.ClienteBusquedaRequestDto;
+import mx.gob.babien.tcb.dto.request.CodigoPostalRequestDto;
 import mx.gob.babien.tcb.dto.response.AltaClienteResponseDto;
 import mx.gob.babien.tcb.dto.response.CatalogoGeneralResponseDto;
 import mx.gob.babien.tcb.dto.response.ClienteBusquedaResponseDto;
+import mx.gob.babien.tcb.dto.response.CodigoPostalResponseDto;
 import mx.gob.babien.tcb.dto.response.CurpDatosResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,17 +67,20 @@ public class OnboardingController {
     private final AltaClienteService altaClienteService;
     private final ClienteBusquedaService clienteBusquedaService;
     private final CatalogoGeneralService catalogoGeneralService;
+    private final CodigoPostalService codigoPostalService;
 
     public OnboardingController(
             CurpUtils curpUtils,
             AltaClienteService altaClienteService,
             ClienteBusquedaService clienteBusquedaService,
-            CatalogoGeneralService catalogoGeneralService
+            CatalogoGeneralService catalogoGeneralService,
+            CodigoPostalService codigoPostalService
     ) {
         this.curpUtils = curpUtils;
         this.altaClienteService = altaClienteService;
         this.clienteBusquedaService = clienteBusquedaService;
         this.catalogoGeneralService = catalogoGeneralService;
+        this.codigoPostalService = codigoPostalService;
     }
 
     @GetMapping("/")
@@ -141,6 +147,15 @@ public class OnboardingController {
     )
     public ResponseEntity<CatalogoGeneralResponseDto> consumirCatalogoGeneral(@RequestBody CatalogoGeneralRequestDto request) {
         return ResponseEntity.ok(catalogoGeneralService.consumirCatalogo(request));
+    }
+
+    @ResponseBody
+    @PostMapping(
+            value = ONBOARDING_BASE_PATH + "/codigos-postal",
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CodigoPostalResponseDto> consumirCodigoPostal(@RequestBody CodigoPostalRequestDto request) {
+        return ResponseEntity.ok(codigoPostalService.consumirCodigoPostal(request));
     }
 
     @PostMapping(ONBOARDING_BASE_PATH + "/altacliente")

@@ -50,7 +50,7 @@ public class RegistroDto {
     @JsonAlias({"CORREO"})
     private String correo;
     @JsonProperty("codigoPostal")
-    @JsonAlias({"CODIGOPOSTAL", "CP", "COD-POSTAL", "CODPOST"})
+    @JsonAlias({"CODIGOPOSTAL", "CP", "COD-POSTAL", "CODPOST", "CODPOSTAL"})
     private String codigoPostal;
     @JsonProperty("paisNacionalidad")
     @JsonAlias({"PAISNACIONALIDAD", "COD-PAIS-NAL", "PAISNACTO"})
@@ -92,4 +92,24 @@ public class RegistroDto {
     private String descrCorta;
     @JsonProperty("PaginaActual")
     private String paginaActual;
+    @JsonProperty("CODLOCALIDAD")
+    private String codLocalidad;
+    @JsonProperty("NOMLOCALIDAD")
+    private String nomLocalidad;
+    @JsonProperty("CODMNCPIO")
+    private String codMncpio;
+    @JsonProperty("NOMMNCPIO")
+    private String nomMncpio;
+    @JsonProperty("CODCIUDAD")
+    private String codCiudad;
+    @JsonProperty("NOMCIUDAD")
+    private String nomCiudad;
+    @JsonProperty("CODESTADO")
+    private String codEstado;
+    @JsonProperty("NOMESTADO")
+    private String nomEstado;
+    @JsonProperty("CODPAIS")
+    private String codPais;
+    @JsonProperty("NOMPAIS")
+    private String nomPais;
 }

@@ -547,6 +547,16 @@
                                                         <label class="form-check-label" for="localidadNoCodificadaHabitual">Localidad No Codificada</label>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-2"><label class="form-label fw-bold" for="domCodLocalidad">Cod. Localidad:</label><input type="text" class="form-control" data-address-field="codLocalidad" id="domCodLocalidad" readonly></div>
+                                                <div class="col-md-4"><label class="form-label fw-bold" for="domNombLocalidad">Localidad:</label><input type="text" class="form-control" data-address-field="nomLocalidad" id="domNombLocalidad" readonly></div>
+                                                <div class="col-md-2"><label class="form-label fw-bold" for="domCodMncpio">Cod. Municipio:</label><input type="text" class="form-control" data-address-field="codMncpio" id="domCodMncpio" readonly></div>
+                                                <div class="col-md-4"><label class="form-label fw-bold" for="domNombMncpio">Municipio:</label><input type="text" class="form-control" data-address-field="nomMncpio" id="domNombMncpio" readonly></div>
+                                                <div class="col-md-2"><label class="form-label fw-bold" for="domCodCiudad">Cod. Ciudad:</label><input type="text" class="form-control" data-address-field="codCiudad" id="domCodCiudad" readonly></div>
+                                                <div class="col-md-4"><label class="form-label fw-bold" for="domNombCiudad">Ciudad:</label><input type="text" class="form-control" data-address-field="nomCiudad" id="domNombCiudad" readonly></div>
+                                                <div class="col-md-2"><label class="form-label fw-bold" for="domCodEstado">Cod. Estado:</label><input type="text" class="form-control" data-address-field="codEstado" id="domCodEstado" readonly></div>
+                                                <div class="col-md-4"><label class="form-label fw-bold" for="domNombEstado">Estado:</label><input type="text" class="form-control" data-address-field="nomEstado" id="domNombEstado" readonly></div>
+                                                <div class="col-md-2"><label class="form-label fw-bold" for="domCodPais">Cod. País:</label><input type="text" class="form-control" data-address-field="codPais" id="domCodPais" readonly></div>
+                                                <div class="col-md-4"><label class="form-label fw-bold" for="domNombPais">País:</label><input type="text" class="form-control" data-address-field="nomPais" id="domNombPais" readonly></div>
 
                                                 <div class="col-md-4"><label class="form-label  fw-bold" for="domNombColonia"><span class="text-danger">*</span> Colonia:</label><input type="text" id="domNombColonia" th:field="*{domNombColonia}" class="form-control" data-address-field="colonia" maxlength="60" autocomplete="off"></div>
                                                 <div class="col-md-4">
@@ -583,6 +593,16 @@
                                                         <label class="form-check-label" for="localidadNoCodificadaHabitua">Localidad No Codificada</label>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-2"><label class="form-label fw-bold" for="domCodLocalidadFiscal">Cod. Localidad:</label><input type="text" class="form-control" data-address-field="codLocalidad" id="domCodLocalidadFiscal" readonly></div>
+                                                <div class="col-md-4"><label class="form-label fw-bold" for="domNombLocalidadFiscal">Localidad:</label><input type="text" class="form-control" data-address-field="nomLocalidad" id="domNombLocalidadFiscal" readonly></div>
+                                                <div class="col-md-2"><label class="form-label fw-bold" for="domCodMncpioFiscal">Cod. Municipio:</label><input type="text" class="form-control" data-address-field="codMncpio" id="domCodMncpioFiscal" readonly></div>
+                                                <div class="col-md-4"><label class="form-label fw-bold" for="domNombMncpioFiscal">Municipio:</label><input type="text" class="form-control" data-address-field="nomMncpio" id="domNombMncpioFiscal" readonly></div>
+                                                <div class="col-md-2"><label class="form-label fw-bold" for="domCodCiudadFiscal">Cod. Ciudad:</label><input type="text" class="form-control" data-address-field="codCiudad" id="domCodCiudadFiscal" readonly></div>
+                                                <div class="col-md-4"><label class="form-label fw-bold" for="domNombCiudadFiscal">Ciudad:</label><input type="text" class="form-control" data-address-field="nomCiudad" id="domNombCiudadFiscal" readonly></div>
+                                                <div class="col-md-2"><label class="form-label fw-bold" for="domCodEstadoFiscal">Cod. Estado:</label><input type="text" class="form-control" data-address-field="codEstado" id="domCodEstadoFiscal" readonly></div>
+                                                <div class="col-md-4"><label class="form-label fw-bold" for="domNombEstadoFiscal">Estado:</label><input type="text" class="form-control" data-address-field="nomEstado" id="domNombEstadoFiscal" readonly></div>
+                                                <div class="col-md-2"><label class="form-label fw-bold" for="domCodPaisFiscal">Cod. País:</label><input type="text" class="form-control" data-address-field="codPais" id="domCodPaisFiscal" readonly></div>
+                                                <div class="col-md-4"><label class="form-label fw-bold" for="domNombPaisFiscal">País:</label><input type="text" class="form-control" data-address-field="nomPais" id="domNombPaisFiscal" readonly></div>
 
                                                 <div class="col-md-4"><label class="form-label  fw-bold" for="domNombColoni"><span class="text-danger">*</span> Colonia:</label><input type="text" id="domNombColoni" class="form-control" data-address-field="colonia" maxlength="60" autocomplete="off"></div>
                                                 <div class="col-md-4">
@@ -1674,6 +1694,120 @@
         cargarCatalogo("domTipoCalleFiscal", "00008", "POT", "Selecciona tipo de calle", "tipo de calle fiscal");
         cargarCatalogo("codEdoCivil", "00032", "PGE", "Selecciona estado civil", "estado civil");
         cargarCatalogo("codRegMatrimonio", "00033", "PGE", "Selecciona régimen de matrimonio", "régimen de matrimonio");
+    })();
+</script>
+<script>
+    (function () {
+        const habitualWrap = document.getElementById("domicilioHabitualWrap");
+        const fiscalWrap = document.getElementById("domicilioFiscalWrap");
+        const cpHabitual = document.getElementById("domCodPostal");
+        const cpFiscal = document.getElementById("domCodPosta");
+        const mismoFiscalToggle = document.getElementById("domicilioMismoFiscal");
+
+        if (!habitualWrap || !fiscalWrap || !cpHabitual || !cpFiscal) {
+            return;
+        }
+
+        let requestSequence = 0;
+
+        function normalize(value) {
+            if (value == null) {
+                return "";
+            }
+            return String(value).trim();
+        }
+
+        function setFieldValue(wrapper, fieldName, value) {
+            const field = wrapper.querySelector("[data-address-field='" + fieldName + "']");
+            if (!field) {
+                return;
+            }
+            field.value = value;
+        }
+
+        function applyRegistro(wrapper, registro) {
+            const data = registro || {};
+            setFieldValue(wrapper, "codLocalidad", normalize(data.CODLOCALIDAD));
+            setFieldValue(wrapper, "nomLocalidad", normalize(data.NOMLOCALIDAD));
+            setFieldValue(wrapper, "codMncpio", normalize(data.CODMNCPIO));
+            setFieldValue(wrapper, "nomMncpio", normalize(data.NOMMNCPIO));
+            setFieldValue(wrapper, "codCiudad", normalize(data.CODCIUDAD));
+            setFieldValue(wrapper, "nomCiudad", normalize(data.NOMCIUDAD));
+            setFieldValue(wrapper, "codEstado", normalize(data.CODESTADO));
+            setFieldValue(wrapper, "nomEstado", normalize(data.NOMESTADO));
+            setFieldValue(wrapper, "codPais", normalize(data.CODPAIS));
+            setFieldValue(wrapper, "nomPais", normalize(data.NOMPAIS));
+        }
+
+        function clearRegistro(wrapper) {
+            applyRegistro(wrapper, null);
+        }
+
+        async function buscarCodigoPostal(codPostal) {
+            const response = await fetch("/onboarding/codigos-postal", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({ CODPOSTAL: codPostal })
+            });
+
+            if (!response.ok) {
+                throw new Error("No fue posible consultar el código postal.");
+            }
+
+            const data = await response.json();
+            const registros = Array.isArray(data.registros) ? data.registros : [];
+            return registros.length ? registros[0] : null;
+        }
+
+        async function resolverCodigoPostal(input, wrapper) {
+            const codPostal = normalize(input.value);
+            if (!codPostal || codPostal.length !== 5) {
+                clearRegistro(wrapper);
+                if (wrapper === habitualWrap && mismoFiscalToggle && mismoFiscalToggle.checked) {
+                    clearRegistro(fiscalWrap);
+                }
+                return;
+            }
+
+            const sequence = ++requestSequence;
+
+            try {
+                const registro = await buscarCodigoPostal(codPostal);
+                if (sequence !== requestSequence) {
+                    return;
+                }
+                applyRegistro(wrapper, registro);
+                if (wrapper === habitualWrap && mismoFiscalToggle && mismoFiscalToggle.checked) {
+                    applyRegistro(fiscalWrap, registro);
+                }
+            } catch (error) {
+                console.error("Error consultando código postal:", error);
+                clearRegistro(wrapper);
+                if (wrapper === habitualWrap && mismoFiscalToggle && mismoFiscalToggle.checked) {
+                    clearRegistro(fiscalWrap);
+                }
+            }
+        }
+
+        function bindCodigoPostal(input, wrapper) {
+            input.addEventListener("change", function () {
+                resolverCodigoPostal(input, wrapper).catch(function (error) {
+                    console.error("Error consultando código postal:", error);
+                });
+            });
+
+            input.addEventListener("blur", function () {
+                resolverCodigoPostal(input, wrapper).catch(function (error) {
+                    console.error("Error consultando código postal:", error);
+                });
+            });
+        }
+
+        bindCodigoPostal(cpHabitual, habitualWrap);
+        bindCodigoPostal(cpFiscal, fiscalWrap);
     })();
 </script>
 <script>

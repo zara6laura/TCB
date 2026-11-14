@@ -22,9 +22,12 @@ import mx.gob.babien.tcb.dto.response.CatalogoGeneralResponseDto;
 import mx.gob.babien.tcb.dto.response.CatalogoRegistroDto;
 import mx.gob.babien.tcb.dto.response.ClienteBusquedaResponseDto;
 import mx.gob.babien.tcb.dto.response.ClienteEncontradoDto;
+import mx.gob.babien.tcb.dto.response.CodigoPostalRegistroDto;
+import mx.gob.babien.tcb.dto.response.CodigoPostalResponseDto;
 import mx.gob.babien.tcb.service.AltaClienteService;
 import mx.gob.babien.tcb.service.CatalogoGeneralService;
 import mx.gob.babien.tcb.service.ClienteBusquedaService;
+import mx.gob.babien.tcb.service.CodigoPostalService;
 import mx.gob.babien.tcb.util.CurpUtils;
 import java.util.List;
 
@@ -46,6 +49,9 @@ class OnboardingControllerTest {
 
     @MockBean
     private CatalogoGeneralService catalogoGeneralService;
+
+    @MockBean
+    private CodigoPostalService codigoPostalService;
 
     @Test
     void shouldRedirectRootToFirstOnboardingStep() throws Exception {
@@ -193,5 +199,30 @@ class OnboardingControllerTest {
                 .andExpect(jsonPath("$.registros[0].COD_TBL_REF").value("00022"))
                 .andExpect(jsonPath("$.registros[0].CLAVE_FILA").value("01"))
                 .andExpect(jsonPath("$.registros[0].DESCR_CORTA").value("COMERCIO"));
+    }
+
+    @Test
+    void shouldReturnCodigoPostalResponse() throws Exception {
+        CodigoPostalRegistroDto registro = new CodigoPostalRegistroDto();
+        registro.setCodPostal("56577");
+        registro.setCodLocalidad("DVAPU11DV");
+        registro.setNomLocalidad("IXTAPALUCA");
+        CodigoPostalResponseDto response = new CodigoPostalResponseDto();
+        response.setEstatus(0);
+        response.setRegistros(List.of(registro));
+        given(codigoPostalService.consumirCodigoPostal(any())).willReturn(response);
+
+        mockMvc.perform(post("/onboarding/codigos-postal")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "CODPOSTAL":"56577"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.estatus").value(0))
+                .andExpect(jsonPath("$.registros[0].CODPOSTAL").value("56577"))
+                .andExpect(jsonPath("$.registros[0].CODLOCALIDAD").value("DVAPU11DV"))
+                .andExpect(jsonPath("$.registros[0].NOMLOCALIDAD").value("IXTAPALUCA"));
     }
 }
